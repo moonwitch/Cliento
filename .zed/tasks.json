@@ -1,0 +1,8 @@
+[
+  {
+    "label": "Open in Marked 2",
+    "command": "open",
+    "args": ["-a", "/Applications/Setapp/Marked.app", "{buffer_path}"],
+    "reveal": "never"
+  }
+]
