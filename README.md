@@ -8,5 +8,5 @@ Dit project wordt ontwikkeld als Geïntegreerde Proef (GIP).
 
 **✨ Developed by:**
 
-[![Logo van Kelly and Coffee](docs/assets/KellyandCoffeeLogobyDesigner.png)](https://github.com/moonwitch)
+[![Logo van Kelly and Coffee](docs/assets/Kelly_and_Coffee.png)](https://github.com/moonwitch)
 **Kelly Crabbé (kellyand.coffee)**
