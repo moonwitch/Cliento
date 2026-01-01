@@ -1,0 +1,26 @@
+{
+  "name": "cliento",
+  "version": "1.0.0",
+  "description": "Cliento is een alles-in-één webapplicatie voor schoonheidsspecialiste Harlyne Timmermans (Lyn and Skin). De applicatie omvat een publieke website en een beheersysteem voor klanten, behandelingen en afspraken.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "supabase start && npx live-server src",
+    "stop": "supabase stop",
+    "clean": "supabase stop --no-backup"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moonwitch/Cliento.git"
+  },
+  "keywords": [],
+  "author": "Kelly Crabbé",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/moonwitch/Cliento/issues"
+  },
+  "homepage": "https://github.com/moonwitch/Cliento#readme"
+}

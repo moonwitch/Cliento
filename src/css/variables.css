@@ -1,0 +1,94 @@
+/* src/css/variables.css */
+
+:root {
+    /* -----------------------------------------------------------------
+     1. COLORS (Figma: Local Styles)
+     ----------------------------------------------------------------- */
+
+    /* Primary Brand (e.g., "Electric Blue") */
+    --primary-100: #E6F0FF;
+    --primary-300: #80B3FF;
+    --primary-500: #0066FF;
+    /* Main Action Color */
+    --primary-700: #0047B3;
+    --primary-900: #002966;
+
+    /* Neutrals (Text & Backgrounds) */
+    --neutral-white: #FFFFFF;
+    --neutral-100: #F5F5F7;
+    /* Page Background */
+    --neutral-300: #D1D1D6;
+    /* Borders */
+    --neutral-500: #8E8E93;
+    /* Subtitles */
+    --neutral-700: #3A3A3C;
+    /* Body Text */
+    --neutral-900: #000000;
+    /* Headings */
+
+    /* Semantic / Utility */
+    --color-success: #34C759;
+    --color-warning: #FF9500;
+    --color-danger: #FF3B30;
+
+
+    /* -----------------------------------------------------------------
+     2. TYPOGRAPHY (Figma: Text Styles)
+     ----------------------------------------------------------------- */
+
+    --font-main: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-code: "JetBrains Mono", monospace;
+    /* Perfect for your code snippets */
+
+    /* Type Scale (Major Third or similar) */
+    --text-xs: 0.75rem;
+    /* 12px */
+    --text-sm: 0.875rem;
+    /* 14px */
+    --text-base: 1rem;
+    /* 16px - Standard Body */
+    --text-lg: 1.25rem;
+    /* 20px */
+    --text-xl: 1.5rem;
+    /* 24px - Section Headers */
+    --text-2xl: 2rem;
+    /* 32px - Page Titles */
+
+    /* Font Weights */
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-bold: 700;
+
+
+    /* -----------------------------------------------------------------
+     3. SPACING (Figma: Auto Layout / Grid)
+     ----------------------------------------------------------------- */
+    /* Using a 4px base grid helps alignment */
+
+    --space-1: 0.25rem;
+    /* 4px */
+    --space-2: 0.5rem;
+    /* 8px */
+    --space-4: 1rem;
+    /* 16px */
+    --space-6: 1.5rem;
+    /* 24px */
+    --space-8: 2rem;
+    /* 32px */
+    --space-12: 3rem;
+    /* 48px */
+
+
+    /* -----------------------------------------------------------------
+     4. UI ELEMENTS
+     ----------------------------------------------------------------- */
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    /* Standard Buttons/Cards */
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,113 @@
+// Cliento Database Schema - DBML
+// Use this in dbdiagram.io to visualize your database
+
+Table profiles {
+  id uuid [pk, ref: > auth_users.id]
+  full_name text
+  role user_role [default: 'beautician']
+  updated_at timestamp
+}
+
+Table clients {
+  id uuid [pk]
+  first_name text
+  last_name text
+  email text [unique]
+  phone text
+  birthday date
+  allergies text
+  concerns text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table appointments {
+  id uuid [pk]
+  client_id uuid [ref: > clients.id]
+  booking_date timestamp
+  status text
+  notes text
+  created_at timestamp
+}
+
+Table treatments {
+  id uuid [pk]
+  name text
+  description text
+  price decimal
+  duration_minutes integer
+  created_at timestamp
+}
+
+Table products {
+  id uuid [pk]
+  brand_id uuid [ref: > brands.id]
+  name text
+  price decimal
+  stock_quantity integer
+  created_at timestamp
+}
+
+Table brands {
+  id uuid [pk]
+  name text [unique]
+  created_at timestamp
+}
+
+Table suppliers {
+  id uuid [pk]
+  name text [unique]
+  contact_info text
+  created_at timestamp
+}
+
+// Join Tables (Many-to-Many)
+
+Table appointment_treatments {
+  appointment_id uuid [ref: > appointments.id]
+  treatment_id uuid [ref: > treatments.id]
+  
+  Indexes {
+    (appointment_id, treatment_id) [pk]
+  }
+}
+
+Table treatment_products {
+  treatment_id uuid [ref: > treatments.id]
+  product_id uuid [ref: > products.id]
+  
+  Indexes {
+    (treatment_id, product_id) [pk]
+  }
+}
+
+Table product_suppliers {
+  product_id uuid [ref: > products.id]
+  supplier_id uuid [ref: > suppliers.id]
+  
+  Indexes {
+    (product_id, supplier_id) [pk]
+  }
+}
+
+Table brand_suppliers {
+  brand_id uuid [ref: > brands.id]
+  supplier_id uuid [ref: > suppliers.id]
+  
+  Indexes {
+    (brand_id, supplier_id) [pk]
+  }
+}
+
+// Enums
+Enum user_role {
+  admin
+  beautician
+  editor
+}
+
+// Note: profiles table links to auth.users in Supabase
+Table auth_users {
+  id uuid [pk]
+  email text
+}

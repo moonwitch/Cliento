@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authentication | Cliento</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="js/auth.js" defer></script>
+    <style>
+        .test-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .status-box {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f8f9fa;
+            font-size: 0.9rem;
+        }
+
+        .btn-test {
+            width: 100%;
+            padding: 0.8rem;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-test:hover {
+            background: #4338ca;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Auth Test Page</h1>
+        <p>Use this page to verify Supabase authentication with the premade user.</p>
+
+        <div class="status-box">
+            <strong>Current Status:</strong>
+            <p id="status-msg">Checking session...</p>
+        </div>
+
+        <button class="btn-test" onclick="loginTestUser()">Log in as kelly@test.com</button>
+
+        <p style="margin-top: 1rem; font-size: 0.8rem;">
+            User: <code>kelly@test.com</code><br>
+            Pass: <code>password123</code>
+        </p>
+
+        <a href="index.html"
+            style="display: block; margin-top: 1.5rem; color: #6366f1; text-decoration: none; font-size: 0.9rem;">Back
+            to Login Page</a>
+    </div>
+
+    <script>
+        window.addEventListener('load', async () => {
+            if (typeof supabaseClient !== 'undefined') {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                const statusMsg = document.getElementById('status-msg');
+                if (session) {
+                    statusMsg.innerText = "Logged in as " + session.user.email;
+                    statusMsg.style.color = "green";
+                } else {
+                    statusMsg.innerText = "Not logged in";
+                    statusMsg.style.color = "orange";
+                }
+            } else {
+                document.getElementById('status-msg').innerText = "Supabase not initialized!";
+                document.getElementById('status-msg').style.color = "red";
+            }
+        });
+    </script>
+</body>
+
+</html>
