@@ -1,6 +1,6 @@
 -- 1. Create Profile Table & Roles
 DO $$ BEGIN
-    CREATE TYPE user_role AS ENUM ('admin', 'beautician', 'editor');
+    CREATE TYPE user_role AS ENUM ('admin', 'beautician', 'editor', 'client');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -8,7 +8,7 @@ END $$;
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
   full_name TEXT,
-  role user_role DEFAULT 'beautician' NOT NULL,
+  role user_role DEFAULT 'client' NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -18,13 +18,14 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 -- 2. Create Clients Table
 CREATE TABLE IF NOT EXISTS public.clients (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL, -- De koppeling met Auth
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   email TEXT UNIQUE,
   phone TEXT,
-  birthday DATE,       -- From Diagram
-  allergies TEXT,      -- From Diagram
-  concerns TEXT,       -- From Diagram
+  birthday DATE,
+  allergies TEXT,
+  concerns TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -67,13 +68,13 @@ CREATE TABLE IF NOT EXISTS public.treatments (
 CREATE TABLE IF NOT EXISTS public.appointments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   client_id UUID REFERENCES public.clients ON DELETE CASCADE NOT NULL,
-  booking_date TIMESTAMP WITH TIME ZONE NOT NULL, -- From Diagram
+  booking_date TIMESTAMP WITH TIME ZONE NOT NULL,
   status TEXT DEFAULT 'scheduled',
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 7. Join Tables (Many-to-Many - as requested in conversation)
+-- 7. Join Tables (Many-to-Many)
 CREATE TABLE IF NOT EXISTS public.appointment_treatments (
   appointment_id UUID REFERENCES public.appointments ON DELETE CASCADE,
   treatment_id UUID REFERENCES public.treatments ON DELETE CASCADE,
@@ -111,14 +112,13 @@ ALTER TABLE public.product_suppliers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.brand_suppliers ENABLE ROW LEVEL SECURITY;
 
 -- 8. Functions & Policies
-
 -- Function to get the role of the current user
 CREATE OR REPLACE FUNCTION public.get_user_role()
 RETURNS user_role AS $$
   SELECT role FROM public.profiles WHERE id = auth.uid();
 $$ LANGUAGE sql SECURITY DEFINER;
 
--- ADMIN POLICIES
+-- ADMIN POLICIES (Full Access)
 CREATE POLICY "Admins have full access" ON public.profiles FOR ALL TO authenticated USING (get_user_role() = 'admin');
 CREATE POLICY "Admins have full access" ON public.clients FOR ALL TO authenticated USING (get_user_role() = 'admin');
 CREATE POLICY "Admins have full access" ON public.brands FOR ALL TO authenticated USING (get_user_role() = 'admin');
@@ -145,22 +145,42 @@ CREATE POLICY "Editors can manage suppliers" ON public.suppliers FOR ALL TO auth
 CREATE POLICY "Editors can view join tables" ON public.treatment_products FOR SELECT TO authenticated USING (get_user_role() = 'editor');
 CREATE POLICY "Editors can view join tables" ON public.product_suppliers FOR SELECT TO authenticated USING (get_user_role() = 'editor');
 
--- Profile Policy for self
-CREATE POLICY "Users can update their own profile" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
-CREATE POLICY "Users can view their own profile" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
+-- CLIENT POLICIES (Users accessing their own data)
+CREATE POLICY "Clients can view own profile" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
+CREATE POLICY "Clients can update own profile" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
+-- Zorgt dat clients hun eigen 'klantfiche' kunnen zien
+CREATE POLICY "Clients can view own client record" ON public.clients FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
 -- 9. Trigger for New User Profiles
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
+  -- 1. Maak het security profiel aan (met rol)
   INSERT INTO public.profiles (id, full_name, role)
-  VALUES (new.id, new.raw_user_meta_data->>'full_name', COALESCE((new.raw_user_meta_data->>'role')::user_role, 'beautician'));
+  VALUES (
+    new.id,
+    new.raw_user_meta_data->>'full_name',
+    COALESCE((new.raw_user_meta_data->>'role')::user_role, 'client')
+  );
+
+  -- 2. Maak AUTOMATISCH het CRM Klant Record aan
+  INSERT INTO public.clients (user_id, first_name, last_name, email)
+  VALUES (
+    new.id,
+    COALESCE(split_part(new.raw_user_meta_data->>'full_name', ' ', 1), 'Nieuwe'),
+    COALESCE(split_part(new.raw_user_meta_data->>'full_name', ' ', 2), 'Klant'),
+    new.email
+  );
+
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'on_auth_user_created') THEN
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'on_auth_user_created') THEN
     CREATE TRIGGER on_auth_user_created
       AFTER INSERT ON auth.users
       FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
-END IF;
+  END IF;
+END $$;

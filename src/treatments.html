@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Treatments | Cliento</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="config.js"></script>
+    </head>
+    <body>
+        <nav
+            style="
+                padding: 1rem;
+                border-bottom: 1px solid #ddd;
+                margin-bottom: 2rem;
+            "
+        >
+            <a href="dashboard.html">Dashboard</a> |
+            <strong>Treatments</strong>
+        </nav>
+
+        <div class="container">
+            <h1>Our Treatments</h1>
+            <p>Choose from our wide range of professional services.</p>
+
+            <div
+                id="treatment-list"
+                class="grid-container"
+                style="
+                    display: grid;
+                    grid-template-columns: repeat(
+                        auto-fill,
+                        minmax(250px, 1fr)
+                    );
+                    gap: 1.5rem;
+                    margin-top: 2rem;
+                "
+            >
+                Loading treatments...
+            </div>
+        </div>
+
+        <script>
+            async function loadTreatments() {
+                // 1. Fetch data from Supabase
+                const { data: treatments, error } = await supabaseClient
+                    .from("treatments")
+                    .select("*");
+
+                const container = document.getElementById("treatment-list");
+                container.innerHTML = ""; // Clear loading text
+
+                if (error) {
+                    container.innerHTML =
+                        '<p style="color:red">Error loading data.</p>';
+                    console.error(error);
+                    return;
+                }
+
+                // 2. Loop through data and create HTML
+                treatments.forEach((t) => {
+                    const card = `
+                    <div class="card" style="border: 1px solid #eee; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top:0;">${t.title}</h3>
+                        <p style="color:#666; font-size: 0.9rem;">${t.description.substring(0, 80)}...</p>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem;">
+                            <span style="font-weight:bold;">€ ${t.price}</span>
+                            <a href="treatment-detail.html?id=${t.id}" class="btn-primary" style="text-decoration:none; font-size: 0.8rem; padding: 5px 10px;">View Details</a>
+                        </div>
+                    </div>
+                `;
+                    container.innerHTML += card;
+                });
+            }
+
+            loadTreatments();
+        </script>
+    </body>
+</html>

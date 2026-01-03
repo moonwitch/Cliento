@@ -1,33 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="nl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cliento | Login</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="config.js"></script>
+    </head>
+    <body>
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <h1 id="form-title">Welkom bij Lyn & Skin</h1>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Cliento</title>
+                <div id="login-box">
+                    <input type="email" id="email" placeholder="E-mailadres" />
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Wachtwoord"
+                    />
+                    <button onclick="handleLogin()" class="btn-primary">
+                        Inloggen
+                    </button>
+                    <p class="switch-text">
+                        Nog geen account?
+                        <a href="#" onclick="toggleMode()">Registreer hier</a>
+                    </p>
+                </div>
 
-    <link rel="stylesheet" href="css/style.css">
+                <div id="register-box" style="display: none">
+                    <input
+                        type="email"
+                        id="reg-email"
+                        placeholder="E-mailadres"
+                    />
+                    <input
+                        type="password"
+                        id="reg-password"
+                        placeholder="Kies een wachtwoord"
+                    />
+                    <button onclick="handleRegister()" class="btn-primary">
+                        Account aanmaken
+                    </button>
+                    <p class="switch-text">
+                        Al klant?
+                        <a href="#" onclick="toggleMode()">Log hier in</a>
+                    </p>
+                </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
-    <script src="js/auth.js" defer></script>
-</head>
-
-<body>
-
-    <div class="auth-container">
-        <h1>Welcome Back</h1>
-        <p>Please enter your details to sign in.</p>
-
-        <div id="login-form">
-            <input type="email" id="email" placeholder="name@company.com" value="kelly@test.com">
-            <input type="password" id="password" placeholder="Password" value="password123">
-
-            <button class="btn-primary" onclick="handleLogin()">Sign In</button>
-            <p id="status-msg" style="margin-top: 1rem; font-size: 0.8rem;"></p>
+                <p id="feedback" style="color: red; margin-top: 10px"></p>
+            </div>
         </div>
-    </div>
 
-</body>
+        <script>
+            // Simpele Auth Logica
+            function toggleMode() {
+                const login = document.getElementById("login-box");
+                const reg = document.getElementById("register-box");
+                const title = document.getElementById("form-title");
 
+                if (login.style.display === "none") {
+                    login.style.display = "block";
+                    reg.style.display = "none";
+                    title.innerText = "Welkom bij Lyn & Skin";
+                } else {
+                    login.style.display = "none";
+                    reg.style.display = "block";
+                    title.innerText = "Nieuw Account";
+                }
+            }
+
+            async function handleLogin() {
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+
+                const { data, error } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email,
+                        password,
+                    });
+                if (error)
+                    document.getElementById("feedback").innerText =
+                        error.message;
+                else window.location.href = "/dashboard.html"; // Redirect
+            }
+
+            async function handleRegister() {
+                const email = document.getElementById("reg-email").value;
+                const password = document.getElementById("reg-password").value;
+
+                // De SQL trigger regelt de rest (profiles tabel etc)
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                });
+
+                if (error) {
+                    document.getElementById("feedback").innerText =
+                        error.message;
+                } else {
+                    alert("Account aangemaakt! Je wordt nu ingelogd.");
+                    window.location.href = "/dashboard.html";
+                }
+            }
+        </script>
+    </body>
 </html>

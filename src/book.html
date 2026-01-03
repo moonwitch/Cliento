@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Boek Afspraak | Cliento</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="config.js"></script>
+    </head>
+    <body>
+        <nav style="padding: 1rem; border-bottom: 1px solid #ddd">
+            <a href="treatments.html">&larr; Terug naar Behandelingen</a>
+        </nav>
+
+        <div class="auth-wrapper">
+            <div class="auth-card" style="max-width: 600px">
+                <h1>Bevestig je Boeking</h1>
+
+                <div
+                    id="summary"
+                    style="
+                        background: #f9f9f9;
+                        padding: 1rem;
+                        border-radius: 8px;
+                        margin-bottom: 2rem;
+                    "
+                >
+                    <p>
+                        <strong>Behandeling:</strong>
+                        <span id="t-name">Laden...</span>
+                    </p>
+                    <p>
+                        <strong>Prijs:</strong> € <span id="t-price">...</span>
+                    </p>
+                    <p>
+                        <strong>Duur:</strong>
+                        <span id="t-duration">...</span> min
+                    </p>
+                </div>
+
+                <form id="booking-form" onsubmit="handleBooking(event)">
+                    <label>Kies een Datum</label>
+                    <input
+                        type="date"
+                        id="date"
+                        required
+                        style="width: 100%; padding: 10px; margin-bottom: 1rem"
+                    />
+
+                    <label>Kies een Tijdstip</label>
+                    <input
+                        type="time"
+                        id="time"
+                        required
+                        style="width: 100%; padding: 10px; margin-bottom: 1rem"
+                    />
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        style="width: 100%"
+                    >
+                        Afspraak Bevestigen
+                    </button>
+                </form>
+
+                <p
+                    id="msg"
+                    style="
+                        margin-top: 1rem;
+                        text-align: center;
+                        font-weight: bold;
+                    "
+                ></p>
+            </div>
+        </div>
+
+        <script>
+            let selectedTreatment = null;
+
+            async function init() {
+                // 1. CHECK LOGIN
+                const {
+                    data: { session },
+                } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    // Niet ingelogd? Terug naar start
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // 2. HAAL BEHANDELING INFO OP (via URL ?treatment=ID)
+                const params = new URLSearchParams(window.location.search);
+                const treatmentId = params.get("treatment");
+
+                if (!treatmentId) {
+                    document.getElementById("msg").innerText =
+                        "Geen behandeling geselecteerd.";
+                    return;
+                }
+
+                const { data: treatment } = await supabaseClient
+                    .from("treatments")
+                    .select("*")
+                    .eq("id", treatmentId)
+                    .single();
+
+                if (treatment) {
+                    selectedTreatment = treatment; // Opslaan voor later
+                    document.getElementById("t-name").innerText =
+                        treatment.title;
+                    document.getElementById("t-price").innerText =
+                        treatment.price;
+                    document.getElementById("t-duration").innerText =
+                        treatment.duration_minutes;
+                }
+
+                // Datum picker instellen (niet in het verleden boeken)
+                document.getElementById("date").min = new Date()
+                    .toISOString()
+                    .split("T")[0];
+            }
+
+            async function handleBooking(e) {
+                e.preventDefault();
+                const msg = document.getElementById("msg");
+                msg.innerText = "Bezig met boeken...";
+                msg.style.color = "#666";
+
+                const dateVal = document.getElementById("date").value;
+                const timeVal = document.getElementById("time").value;
+
+                // Timestamp maken voor Supabase
+                const fullDateTime = new Date(`${dateVal}T${timeVal}`);
+
+                // 1. Wie is de ingelogde user?
+                const {
+                    data: { user },
+                } = await supabaseClient.auth.getUser();
+
+                // 2. Zoek de bijbehorende KLANT ID
+                // (Appointments hangen aan 'clients', niet direct aan 'users')
+                const { data: clientData, error: clientError } =
+                    await supabaseClient
+                        .from("clients")
+                        .select("id")
+                        .eq("user_id", user.id)
+                        .single();
+
+                if (clientError || !clientData) {
+                    msg.innerText = "Fout: Kon je klantprofiel niet vinden.";
+                    msg.style.color = "red";
+                    return;
+                }
+
+                // 3. Maak de afspraak
+                const { error: bookingError } = await supabaseClient
+                    .from("appointments")
+                    .insert({
+                        client_id: clientData.id,
+                        treatment_title: selectedTreatment.title, // We slaan de naam op voor het gemak
+                        start_time: fullDateTime.toISOString(),
+                        status: "confirmed",
+                    });
+
+                if (bookingError) {
+                    msg.innerText = "Boeking mislukt: " + bookingError.message;
+                    msg.style.color = "red";
+                } else {
+                    msg.innerText = "Gelukt! Je wordt doorgestuurd...";
+                    msg.style.color = "green";
+                    setTimeout(
+                        () => (window.location.href = "dashboard.html"),
+                        1500,
+                    );
+                }
+            }
+
+            init();
+        </script>
+    </body>
+</html>
