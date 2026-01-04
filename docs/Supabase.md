@@ -47,3 +47,27 @@ Deze architectuur biedt **flexibiliteit en schaalbaarheid**:
 * ✅ **Data integriteit:** Authenticatie staat los van business logic.
 * ✅ **Inclusiviteit:** Het systeem ondersteunt zowel digitale 'power users' als klanten zonder computer.
 * ✅ **Gebruiksgemak:** Voor de schoonheidsspecialiste staan alle klanten (online en offline) in één overzichtelijke lijst (`clients`), zonder dat ze zich zorgen hoeft te maken over wie er wel of niet kan inloggen.
+
+Database Architectuur: Supabase (PostgreSQL)
+
+Voor de data-opslag van Cliento maken we gebruik van een relationeel model in Supabase. De architectuur is opgesplitst in drie domeinen:
+
+Identity & Access (IAM):
+
+auth.users: Beheerd door Supabase Auth. Bevat inloggegevens.
+
+public.profiles: Een extensie van de user-tabel die rollen (RBAC) beheert zoals 'admin', 'beautician', en 'client'.
+
+Customer Relationship Management (CRM):
+
+public.clients: De centrale tabel voor klantgegevens.
+
+Relatie: Er is een One-to-One relatie met auth.users via de user_id kolom. Deze is 'nullable' (mag leeg zijn), waardoor het systeem ook offline klanten ondersteunt die geen account hebben (bijv. telefonische afspraken).
+
+Core Business Logic:
+
+public.treatments: Bevat het aanbod (Producten/Diensten). Deze is publiek leesbaar via RLS policies.
+
+public.appointments: Koppelt een client aan een tijdstip.
+
+Automatisering: Om de consistentie te bewaren wordt gebruik gemaakt van Database Triggers. De functie handle_new_user zorgt ervoor dat bij elke nieuwe registratie automatisch een profile en een client record wordt aangemaakt.

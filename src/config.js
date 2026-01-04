@@ -1,8 +1,8 @@
 // config.js
 
 // TEST: Kelly-dev
-const DEV_URL = "https://db.eurjujehqvapcdhplqsj.supabase.co";
-const DEV_KEY = "sb_publishable_2q-QfOlS0i-jHx5gJFAX3g_i3tJnmU2";
+const DEV_URL = "https://hvxqoasamovfkccesmqd.supabase.co";
+const DEV_KEY = "sb_publishable_c8d9YhyQptjOP0_yDFmH1g_XvBmo3W2";
 
 // PROD: You'll manually swap these or use environment variables in CI/CD later
 const PROD_URL = "https://opwzyuswtztpulzpyomp.supabase.co";

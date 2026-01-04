@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "supabase start && npx live-server src",
+    "dev-db": "supabase start && npx live-server src",
+    "dev": "npx live-server src",
     "stop": "supabase stop",
     "clean": "supabase stop --no-backup"
   },

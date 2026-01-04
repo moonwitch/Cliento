@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Treatments | Cliento</title>
+        <title>Behandelingen | Cliento</title>
         <link rel="stylesheet" href="css/style.css" />
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="config.js"></script>
@@ -13,16 +13,22 @@
             style="
                 padding: 1rem;
                 border-bottom: 1px solid #ddd;
-                margin-bottom: 2rem;
+                display: flex;
+                justify-content: space-between;
             "
         >
-            <a href="dashboard.html">Dashboard</a> |
-            <strong>Treatments</strong>
+            <a
+                href="dashboard.html"
+                style="text-decoration: none; font-weight: bold"
+                >&larr; Terug naar Dashboard</a
+            >
+            <span>Cliento Behandelingen</span>
         </nav>
 
-        <div class="container">
-            <h1>Our Treatments</h1>
-            <p>Choose from our wide range of professional services.</p>
+        <div class="container" style="max-width: 1000px; margin: 2rem auto">
+            <h1 style="text-align: center; margin-bottom: 2rem">
+                Kies je Behandeling
+            </h1>
 
             <div
                 id="treatment-list"
@@ -31,42 +37,51 @@
                     display: grid;
                     grid-template-columns: repeat(
                         auto-fill,
-                        minmax(250px, 1fr)
+                        minmax(300px, 1fr)
                     );
                     gap: 1.5rem;
-                    margin-top: 2rem;
                 "
             >
-                Loading treatments...
+                <p>Laden...</p>
             </div>
         </div>
 
         <script>
             async function loadTreatments() {
-                // 1. Fetch data from Supabase
+                // 1. Data ophalen uit Supabase
+                // We sorteren op categorie, zodat het netjes gegroepeerd lijkt
                 const { data: treatments, error } = await supabaseClient
                     .from("treatments")
-                    .select("*");
+                    .select("*")
+                    .order("category", { ascending: true });
 
                 const container = document.getElementById("treatment-list");
-                container.innerHTML = ""; // Clear loading text
+                container.innerHTML = ""; // "Laden..." weghalen
 
                 if (error) {
-                    container.innerHTML =
-                        '<p style="color:red">Error loading data.</p>';
                     console.error(error);
+                    container.innerHTML =
+                        '<p style="color:red">Kon behandelingen niet laden.</p>';
                     return;
                 }
 
-                // 2. Loop through data and create HTML
+                // 2. HTML Genereren
                 treatments.forEach((t) => {
                     const card = `
-                    <div class="card" style="border: 1px solid #eee; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <h3 style="margin-top:0;">${t.title}</h3>
-                        <p style="color:#666; font-size: 0.9rem;">${t.description.substring(0, 80)}...</p>
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem;">
-                            <span style="font-weight:bold;">€ ${t.price}</span>
-                            <a href="treatment-detail.html?id=${t.id}" class="btn-primary" style="text-decoration:none; font-size: 0.8rem; padding: 5px 10px;">View Details</a>
+                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <span class="badge" style="background: #eee; color: #555; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
+                                ${t.category || "Algemeen"}
+                            </span>
+                            <h3 style="margin-top: 0.5rem;">${t.title}</h3>
+                            <p style="color: #666; font-size: 0.95rem;">${t.description.substring(0, 100)}...</p>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
+                            <span style="font-weight: bold; font-size: 1.1rem;">€ ${t.price}</span>
+                            <a href="treatment-detail.html?id=${t.id}" class="btn-primary" style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                Bekijk & Boek
+                            </a>
                         </div>
                     </div>
                 `;

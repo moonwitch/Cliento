@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="css/style.css" />
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="config.js"></script>
+        <script src="js/auth.js" defer></script>
     </head>
     <body>
         <div class="auth-wrapper">
@@ -14,51 +15,101 @@
                 <h1 id="form-title">Welkom bij Lyn & Skin</h1>
 
                 <div id="login-box">
-                    <input type="email" id="email" placeholder="E-mailadres" />
+                    <p
+                        style="
+                            color: #666;
+                            font-size: 0.9rem;
+                            margin-bottom: 1rem;
+                        "
+                    >
+                        Log in om je afspraken te beheren.
+                    </p>
+                    <input
+                        type="email"
+                        id="login-email"
+                        placeholder="E-mailadres"
+                    />
                     <input
                         type="password"
-                        id="password"
+                        id="login-password"
                         placeholder="Wachtwoord"
                     />
                     <button onclick="handleLogin()" class="btn-primary">
                         Inloggen
                     </button>
-                    <p class="switch-text">
-                        Nog geen account?
-                        <a href="#" onclick="toggleMode()">Registreer hier</a>
-                    </p>
+                    <div class="switch-text">
+                        Nog geen klant?
+                        <a href="#" onclick="toggleMode()"
+                            >Maak een account aan</a
+                        >
+                    </div>
                 </div>
 
                 <div id="register-box" style="display: none">
+                    <p
+                        style="
+                            color: #666;
+                            font-size: 0.9rem;
+                            margin-bottom: 1rem;
+                        "
+                    >
+                        Vul je gegevens in.
+                    </p>
+
+                    <div style="display: flex; gap: 10px">
+                        <input
+                            type="text"
+                            id="reg-firstname"
+                            placeholder="Voornaam"
+                            style="width: 50%"
+                        />
+                        <input
+                            type="text"
+                            id="reg-lastname"
+                            placeholder="Achternaam"
+                            style="width: 50%"
+                        />
+                    </div>
+
                     <input
                         type="email"
                         id="reg-email"
-                        placeholder="E-mailadres"
+                        placeholder="Jouw E-mailadres"
                     />
                     <input
                         type="password"
                         id="reg-password"
                         placeholder="Kies een wachtwoord"
                     />
-                    <button onclick="handleRegister()" class="btn-primary">
-                        Account aanmaken
+
+                    <button onclick="handleSignup()" class="btn-primary">
+                        Registreren
                     </button>
-                    <p class="switch-text">
-                        Al klant?
+
+                    <div class="switch-text">
+                        Al een account?
                         <a href="#" onclick="toggleMode()">Log hier in</a>
-                    </p>
+                    </div>
                 </div>
 
-                <p id="feedback" style="color: red; margin-top: 10px"></p>
+                <p
+                    id="status-msg"
+                    style="
+                        margin-top: 1rem;
+                        text-align: center;
+                        font-size: 0.9rem;
+                    "
+                ></p>
             </div>
         </div>
 
         <script>
-            // Simpele Auth Logica
             function toggleMode() {
                 const login = document.getElementById("login-box");
                 const reg = document.getElementById("register-box");
                 const title = document.getElementById("form-title");
+                const msg = document.getElementById("status-msg");
+                if (msg) msg.innerText = "";
 
                 if (login.style.display === "none") {
                     login.style.display = "block";
@@ -67,41 +118,7 @@
                 } else {
                     login.style.display = "none";
                     reg.style.display = "block";
-                    title.innerText = "Nieuw Account";
-                }
-            }
-
-            async function handleLogin() {
-                const email = document.getElementById("email").value;
-                const password = document.getElementById("password").value;
-
-                const { data, error } =
-                    await supabaseClient.auth.signInWithPassword({
-                        email,
-                        password,
-                    });
-                if (error)
-                    document.getElementById("feedback").innerText =
-                        error.message;
-                else window.location.href = "/dashboard.html"; // Redirect
-            }
-
-            async function handleRegister() {
-                const email = document.getElementById("reg-email").value;
-                const password = document.getElementById("reg-password").value;
-
-                // De SQL trigger regelt de rest (profiles tabel etc)
-                const { data, error } = await supabaseClient.auth.signUp({
-                    email,
-                    password,
-                });
-
-                if (error) {
-                    document.getElementById("feedback").innerText =
-                        error.message;
-                } else {
-                    alert("Account aangemaakt! Je wordt nu ingelogd.");
-                    window.location.href = "/dashboard.html";
+                    title.innerText = "Nieuwe Klant";
                 }
             }
         </script>
