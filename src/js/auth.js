@@ -6,24 +6,39 @@ async function handleLogin() {
   const password = document.getElementById("login-password").value;
   const statusMsg = document.getElementById("status-msg");
 
-  if (!email || !password) return; // Simpele check
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  statusMsg.innerText = "Verbinden...";
+    if (error) throw error;
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password,
-  });
+    console.log("Inloggen auth gelukt, nu rol ophalen...");
 
-  if (error) {
-    statusMsg.innerText = "Fout: " + error.message;
-    statusMsg.style.color = "red";
-  } else {
-    window.location.href = "dashboard.html";
+    // 2. De database vragen: Welke rol heeft deze user?
+    const { data: role, error: roleError } =
+      await supabaseClient.rpc("get_my_role");
+
+    if (roleError) throw roleError;
+
+    console.log("Gebruiker is ingelogd als:", role);
+
+    // 3. De Verkeersregelaar: Stuur ze naar de juiste pagina
+    if (["admin", "superadmin", "employee"].includes(role)) {
+      window.location.href = "/admin/dashboard.html";
+    } else {
+      window.location.href = "/dashboard.html";
+    }
+  } catch (error) {
+    console.error("Er ging iets mis:", error.message);
+    alert("Inloggen mislukt: " + error.message);
   }
 }
 
-// 2. REGISTREREN (HIER ZAT HET PROBLEEM)
 async function handleSignup() {
   // Haal de nieuwe velden op
   const firstName = document.getElementById("reg-firstname").value;

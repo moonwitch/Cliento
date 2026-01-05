@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="nl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard | Cliento</title>
+        <link rel="stylesheet" href="../css/style.css" />
+
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="../config.js"></script>
+        <script src="../js/auth.js" defer></script>
+    </head>
+    <body>
+        <nav
+            style="
+                padding: 1rem;
+                border-bottom: 1px solid #ddd;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            "
+        >
+            <div style="font-weight: bold; font-size: 1.2rem">Cliento</div>
+            <div>
+                <a href="treatments.html" class="btn" style="margin-right: 1rem"
+                    >Nieuwe Afspraak Boeken</a
+                >
+                <button
+                    onclick="handleLogout()"
+                    class="btn-secondary"
+                    style="font-size: 0.9rem"
+                >
+                    Uitloggen
+                </button>
+            </div>
+        </nav>
+
+        <div class="container" style="max-width: 800px; margin: 2rem auto">
+            <h1>Hallo, <span id="user-name">...</span> 👋</h1>
+            <p class="subtitle">Welkom terug in jouw persoonlijke omgeving.</p>
+
+            <div class="card" style="margin-top: 2rem">
+                <h2>📅 Mijn Geplande Afspraken</h2>
+                <div id="appointments-list" style="margin-top: 1rem">
+                    <p>Gegevens laden...</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            async function initDashboard() {
+                // 1. CHECK LOGIN
+                const {
+                    data: { session },
+                } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // 2. HAAL PROFIEL OP (Voor de naam)
+                // We zoeken in 'profiles' op basis van de user ID uit de sessie
+                const { data: profile } = await supabaseClient
+                    .from("profiles")
+                    .select("first_name, role")
+                    .eq("id", session.user.id)
+                    .single();
+
+                if (profile) {
+                    document.getElementById("user-name").innerText =
+                        profile.first_name || "Klant";
+
+                    // Optioneel: Als het een admin is, toon een extra knop (komen we later op terug)
+                    if (
+                        profile.role === "admin" ||
+                        profile.role === "beautician"
+                    ) {
+                        // Hier kunnen we later Admin knoppen tonen
+                        console.log("Admin ingelogd");
+                    }
+                }
+
+                // 3. HAAL CLIENT ID OP
+                // Afspraken zijn gekoppeld aan 'client_id', niet direct 'user_id'.
+                // We moeten dus eerst weten welk klantnummer bij deze user hoort.
+                const { data: clientData, error: clientError } =
+                    await supabaseClient
+                        .from("clients")
+                        .select("id")
+                        .eq("user_id", session.user.id)
+                        .single();
+
+                const list = document.getElementById("appointments-list");
+
+                if (clientError || !clientData) {
+                    // Dit gebeurt als je wel een user bent (bv. admin), maar geen klantfiche hebt
+                    list.innerHTML =
+                        "<p>Geen klantgegevens gevonden. Ben je een medewerker?</p>";
+                    return;
+                }
+
+                // 4. HAAL AFSPRAKEN OP
+                const { data: appointments, error: appError } =
+                    await supabaseClient
+                        .from("appointments")
+                        .select("*")
+                        .eq("client_id", clientData.id)
+                        .order("start_time", { ascending: true }); // Eerstvolgende eerst
+
+                list.innerHTML = ""; // Loader weghalen
+
+                if (appError) {
+                    list.innerHTML =
+                        "<p style='color:red'>Fout bij laden afspraken.</p>";
+                    console.error(appError);
+                    return;
+                }
+
+                if (appointments.length === 0) {
+                    list.innerHTML =
+                        "<p>Je hebt nog geen afspraken staan.</p><a href='treatments.html'>Boek je eerste behandeling!</a>";
+                    return;
+                }
+
+                // 5. RENDERING (De lijst bouwen)
+                appointments.forEach((app) => {
+                    // Datum mooi formatteren (bv. "Maandag 12 oktober om 14:00")
+                    const dateObj = new Date(app.start_time);
+                    const dateStr = dateObj.toLocaleDateString("nl-BE", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                    });
+                    const timeStr = dateObj.toLocaleTimeString("nl-BE", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    });
+
+                    const item = `
+                    <div style="border-bottom: 1px solid #eee; padding: 1rem 0; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="font-size: 1.1rem;">${app.treatment_title}</strong>
+                            <div style="color: #666; margin-top: 4px;">
+                                📅 ${dateStr} <br>
+                                ⏰ ${timeStr} uur
+                            </div>
+                        </div>
+                        <div>
+                            <span style="
+                                background: ${app.status === "confirmed" ? "#e6f4ea" : "#fff3cd"};
+                                color: ${app.status === "confirmed" ? "#1e7e34" : "#856404"};
+                                padding: 5px 10px;
+                                border-radius: 15px;
+                                font-size: 0.8rem;
+                                font-weight: bold;">
+                                ${app.status === "confirmed" ? "Bevestigd" : app.status}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                    list.innerHTML += item;
+                });
+            }
+
+            // Start de motor!
+            initDashboard();
+        </script>
+    </body>
+</html>
