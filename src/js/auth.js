@@ -64,6 +64,7 @@ async function handleSignup() {
         first_name: firstName,
         last_name: lastName,
         full_name: `${firstName} ${lastName}`,
+        role: "client",
       },
     },
   });
