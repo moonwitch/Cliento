@@ -55,7 +55,6 @@ async function handleSignup() {
 
   statusMsg.innerText = "Registreren...";
 
-  // Stuur naam mee als 'metadata' -> Dit triggert de database om een klantfiche te maken
   const { data, error } = await supabaseClient.auth.signUp({
     email: email,
     password: password,
@@ -65,6 +64,8 @@ async function handleSignup() {
         last_name: lastName,
         full_name: `${firstName} ${lastName}`,
         role: "client",
+        phone: document.getElementById("reg-phone").value,
+        birthday: document.getElementById("reg-bday").value,
       },
     },
   });
