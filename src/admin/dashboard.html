@@ -10,14 +10,6 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         />
         <style>
-            /* Specifieke Admin Styles */
-            body {
-                display: flex;
-                height: 100vh;
-                overflow: hidden;
-                background-color: #f4f4f4;
-            }
-
             /* Sidebar */
             .sidebar {
                 width: 250px;
@@ -51,13 +43,6 @@
                 color: white;
             }
 
-            /* Main Content */
-            .main-content {
-                flex: 1;
-                padding: 2rem;
-                overflow-y: auto;
-            }
-
             /* Dashboard Grid */
             .stats-grid {
                 display: grid;
@@ -82,6 +67,8 @@
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="../config.js"></script>
         <script src="../js/auth.js" defer></script>
+        <script src="../js/loader.js" defer></script>
+        <script src="../js/utils.js" defer></script>
     </head>
     <body>
         <nav class="sidebar">
@@ -204,9 +191,6 @@
         </main>
 
         <script>
-            // Simpele router om niet steeds van pagina te hoeven wisselen
-            // In een echt project gebruik je misschien aparte files, maar voor nu is dit snel.
-
             async function checkAdmin() {
                 const {
                     data: { session },
@@ -224,7 +208,7 @@
                 }
             }
 
-            function loadModule(moduleName) {
+            async function loadModule(moduleName) {
                 // Update active class
                 document
                     .querySelectorAll(".menu-item")
@@ -235,14 +219,21 @@
 
                 const content = document.getElementById("app-content");
 
-                // Hier gaan we straks de inhoud switchen
-                // Voor nu even placeholders
                 if (moduleName === "dashboard") {
                     content.innerHTML = `<h1>Dashboard Overzicht</h1><p>Statistieken laden...</p>`;
                     // Hier roepen we dan een functie aan die de stats ophaalt
                 } else if (moduleName === "stock") {
-                    content.innerHTML = `<h1>Stock Beheer</h1><button class="btn-primary" onclick="alert('Nog te bouwen')">+ Nieuw Product</button><div id="stock-list">Laden...</div>`;
-                    // fetchStock();
+                    await loadComponent("app-content", "modules/stock.html");
+                    await loadScript("modules/js/stock.js");
+                    if (typeof fetchStock === "function") {
+                        fetchStock();
+                    }
+                } else if (moduleName === "staff") {
+                    await loadComponent("app-content", "modules/staff.html");
+                    await loadScript("modules/js/staff.js");
+                    if (typeof fetchStaff === "function") {
+                        fetchStaff();
+                    }
                 } else if (moduleName === "cms") {
                     content.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -282,6 +273,69 @@
 
             // Init
             checkAdmin();
+
+            // 1. HAAL DE BLOKKEN OP
+            async function fetchContentBlocks() {
+                const list = document.getElementById("cms-list");
+                const { data: blocks, error } = await supabaseClient
+                    .from("content_blocks")
+                    .select("*")
+                    .order("section_key");
+
+                if (error) {
+                    list.innerHTML = `<p style="color:red">Fout: ${error.message}</p>`;
+                    return;
+                }
+
+                list.innerHTML = "";
+                blocks.forEach((block) => {
+                    // We maken een knopje voor elk tekstblok
+                    const btn = document.createElement("div");
+                    btn.className = "menu-item"; // Hergebruik je stijl
+                    btn.style.cursor = "pointer";
+                    btn.style.border = "1px solid #eee";
+                    btn.innerHTML = `<strong>${block.label || block.section_key}</strong>`;
+
+                    btn.onclick = () => openEditor(block);
+                    list.appendChild(btn);
+                });
+            }
+
+            // 2. OPEN DE EDITOR
+            function openEditor(block) {
+                document.getElementById("cms-editor").style.display = "block";
+                document.getElementById("editor-title").innerText =
+                    "Bewerken: " + (block.label || block.section_key);
+                document.getElementById("editor-id").value = block.id;
+                document.getElementById("editor-content").value =
+                    block.content || "";
+                document.getElementById("cms-msg").innerText = "";
+            }
+
+            // 3. OPSLAAN NAAR SUPABASE
+            async function saveContentBlock() {
+                const id = document.getElementById("editor-id").value;
+                const newContent =
+                    document.getElementById("editor-content").value;
+                const msg = document.getElementById("cms-msg");
+
+                msg.innerText = "Opslaan...";
+
+                const { error } = await supabaseClient
+                    .from("content_blocks")
+                    .update({ content: newContent, updated_at: new Date() })
+                    .eq("id", id);
+
+                if (error) {
+                    msg.innerText = "Fout: " + error.message;
+                    msg.style.color = "red";
+                } else {
+                    msg.innerText = "Succesvol opgeslagen! ✅";
+                    msg.style.color = "green";
+                    // Ververs de lijst (optioneel, als je labels aanpasbaar maakt)
+                    fetchContentBlocks();
+                }
+            }
         </script>
     </body>
 </html>

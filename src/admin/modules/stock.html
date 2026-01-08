@@ -1,0 +1,52 @@
+<div
+    style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    "
+>
+    <h1
+        style="
+            color: var(--color-primary);
+            font-family: &quot;Playfair Display&quot;, serif;
+        "
+    >
+        Stock Beheer
+    </h1>
+    <button class="btn-primary" onclick="alert('Komt eraan!')">
+        + Nieuw Product
+    </button>
+</div>
+
+<div
+    class="card"
+    style="
+        overflow-x: auto;
+        background: white;
+        padding: 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    "
+>
+    <table style="width: 100%; border-collapse: collapse; text-align: left">
+        <thead>
+            <tr style="background-color: var(--color-primary); color: white">
+                <th style="padding: 1rem">Product</th>
+                <th style="padding: 1rem">Prijs</th>
+                <th style="padding: 1rem">Voorraad</th>
+                <th style="padding: 1rem">Status</th>
+            </tr>
+        </thead>
+        <tbody id="stock-table-body">
+            <tr>
+                <td
+                    colspan="4"
+                    style="padding: 2rem; text-align: center; color: #888"
+                >
+                    Data aan het ophalen...
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
