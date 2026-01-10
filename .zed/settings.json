@@ -1,0 +1,7 @@
+{
+  "colorize_brackets": true,
+  "tasks": {
+    "prefer_lsp": false
+  },
+  "soft_wrap": "editor_width"
+}

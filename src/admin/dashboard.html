@@ -1,341 +1,110 @@
 <!doctype html>
 <html lang="nl">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Admin Dashboard | Lyn & Skin</title>
-        <link rel="stylesheet" href="../css/style.css" />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-        />
-        <style>
-            /* Sidebar */
-            .sidebar {
-                width: 250px;
-                background-color: var(
-                    --color-background
-                ); /* Of je primary color */
-                border-right: 1px solid #ddd;
-                padding: 2rem 1rem;
-                display: flex;
-                flex-direction: column;
-            }
-            .sidebar h2 {
-                margin-bottom: 2rem;
-                color: var(--color-primary);
-                font-family: "Playfair Display", serif;
-            }
-            .menu-item {
-                padding: 10px 15px;
-                margin-bottom: 5px;
-                border-radius: 5px;
-                color: var(--color-text);
-                text-decoration: none;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                transition: background 0.3s;
-            }
-            .menu-item:hover,
-            .menu-item.active {
-                background-color: var(--color-primary);
-                color: white;
-            }
 
-            /* Dashboard Grid */
-            .stats-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-            .stat-card {
-                background: white;
-                padding: 1.5rem;
-                border-radius: 8px;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-                text-align: center;
-            }
-            .stat-number {
-                font-size: 2rem;
-                font-weight: bold;
-                color: var(--color-primary);
-            }
-        </style>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | Lyn & Skin</title>
+    <!--<link rel="stylesheet" href="../css/style.css" />-->
+    <!-- Fluid viewport -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
 
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="../config.js"></script>
-        <script src="../js/auth.js" defer></script>
-        <script src="../js/loader.js" defer></script>
-        <script src="../js/utils.js" defer></script>
-    </head>
-    <body>
-        <nav class="sidebar">
-            <h2>Cliento Admin</h2>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-            <a
-                href="#"
-                onclick="loadModule('dashboard')"
-                class="menu-item active"
-                id="nav-dashboard"
-            >
-                <i class="fas fa-home"></i> Overzicht
-            </a>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js" defer></script>
 
-            <div
-                style="
-                    margin-top: 1rem;
-                    font-size: 0.8rem;
-                    text-transform: uppercase;
-                    color: #888;
-                    font-weight: bold;
-                "
-            >
-                CRM
-            </div>
-            <a
-                href="#"
-                onclick="loadModule('calendar')"
-                class="menu-item"
-                id="nav-calendar"
-            >
-                <i class="fas fa-calendar-alt"></i> Agenda
-            </a>
-            <a
-                href="#"
-                onclick="loadModule('clients')"
-                class="menu-item"
-                id="nav-clients"
-            >
-                <i class="fas fa-users"></i> Klanten
-            </a>
+    <script src="./js/dashboard.js" defer></script>
+    <script src="./js/cms.js" defer></script>
+    <script src="./js/treatments.js" defer></script>
+</head>
 
-            <div
-                style="
-                    margin-top: 1rem;
-                    font-size: 0.8rem;
-                    text-transform: uppercase;
-                    color: #888;
-                    font-weight: bold;
-                "
-            >
-                Management
-            </div>
-            <a
-                href="#"
-                onclick="loadModule('staff')"
-                class="menu-item"
-                id="nav-staff"
-            >
-                <i class="fas fa-user-nurse"></i> Personeel
-            </a>
-            <a
-                href="#"
-                onclick="loadModule('stock')"
-                class="menu-item"
-                id="nav-stock"
-            >
-                <i class="fas fa-boxes"></i> Stock
-            </a>
+<body>
+    <nav>
+        <ul>
+            <li>
+                <details class="dropdown">
+                    <summary>Dashboard</summary>
 
-            <div
-                style="
-                    margin-top: 1rem;
-                    font-size: 0.8rem;
-                    text-transform: uppercase;
-                    color: #888;
-                    font-weight: bold;
-                "
-            >
-                Website
-            </div>
-            <a
-                href="#"
-                onclick="loadModule('cms')"
-                class="menu-item"
-                id="nav-cms"
-            >
-                <i class="fas fa-edit"></i> Content (CMS)
-            </a>
+                    <ul dir="rtl">
+                        <li><a href="#" onclick="loadModule('dashboard')" class="menu-item active" id="nav-dashboard">
+                                <i class="fas fa-home"></i> Overzicht
+                            </a></li>
+                        <li><a href="#" onclick="loadModule('calendar')" class="menu-item" id="nav-calendar">
+                                <i class="fas fa-calendar-alt"></i> Agenda
+                            </a></li>
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details class="dropdown">
+                    <summary>CRM</summary>
 
-            <div style="margin-top: auto">
-                <button
-                    onclick="handleLogout()"
-                    class="btn-secondary"
-                    style="width: 100%"
-                >
-                    Uitloggen
-                </button>
-            </div>
-        </nav>
+                    <ul dir="rtl">
+                        <li><a href="#" onclick="loadModule('clients')" class="menu-item" id="nav-clients">
+                                <i class="fas fa-users"></i> Klanten
+                            </a></li>
+                        <li><a href="#" onclick="loadModule('appointments')" class="menu-item" id="nav-appointments">
+                                <i class="fas fa-calendar-check"></i> Afspraken
+                            </a></li>
+                    </ul>
+                </details>
+            </li>
+            <li>
+                <details class="dropdown">
+                    <summary>Management</summary>
 
-        <main class="main-content" id="app-content">
-            <h1>Welkom Harlyne 👋</h1>
-            <p>Selecteer een module in het menu.</p>
+                    <ul dir="rtl">
+                        <<li><a href="#" onclick="loadModule('staff')" class="menu-item" id="nav-staff">
+                                <i class="fas fa-user-nurse"></i> Personeel
+                            </a>
+            </li>
+            <li><a href="#" onclick="loadModule('stock')" class="menu-item" id="nav-stock">
+                    <i class="fas fa-boxes"></i> Stock
+                </a></li>
+            <li><a href="#" onclick="loadModule('treatments')" class="menu-item" id="nav-treatments">
+                    <i class="fas fa-syringe"></i> Behandelingen
+                </a></li>
+        </ul>
+        </details>
+        </li>
+        </ul>
 
-            <div class="stats-grid" style="margin-top: 2rem">
-                <div class="stat-card">
-                    <div class="stat-number" id="stat-appointments">-</div>
-                    <div>Afspraken Vandaag</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="stat-clients">-</div>
-                    <div>Nieuwe Klanten</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="stat-stock">-</div>
-                    <div>Producten Laag in Stock</div>
-                </div>
-            </div>
-        </main>
 
-        <script>
-            async function checkAdmin() {
-                const {
-                    data: { session },
-                } = await supabaseClient.auth.getSession();
-                if (!session) {
-                    window.location.href = "../index.html";
-                    return;
-                }
 
-                // Haal rol op (security check)
-                const { data: role } = await supabaseClient.rpc("get_my_role");
-                if (role !== "admin" && role !== "superadmin") {
-                    alert("Geen toegang!");
-                    window.location.href = "../dashboard.html";
-                }
-            }
+        <button onclick="handleLogout()" class="btn-secondary" style="width: 100%">
+            Uitloggen
+        </button>
+    </nav>
 
-            async function loadModule(moduleName) {
-                // Update active class
-                document
-                    .querySelectorAll(".menu-item")
-                    .forEach((el) => el.classList.remove("active"));
-                document
-                    .getElementById("nav-" + moduleName)
-                    .classList.add("active");
 
-                const content = document.getElementById("app-content");
-
-                if (moduleName === "dashboard") {
-                    content.innerHTML = `<h1>Dashboard Overzicht</h1><p>Statistieken laden...</p>`;
-                    // Hier roepen we dan een functie aan die de stats ophaalt
-                } else if (moduleName === "stock") {
-                    await loadComponent("app-content", "modules/stock.html");
-                    await loadScript("modules/js/stock.js");
-                    if (typeof fetchStock === "function") {
-                        fetchStock();
-                    }
-                } else if (moduleName === "staff") {
-                    await loadComponent("app-content", "modules/staff.html");
-                    await loadScript("modules/js/staff.js");
-                    if (typeof fetchStaff === "function") {
-                        fetchStaff();
-                    }
-                } else if (moduleName === "cms") {
-                    content.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                            <h1>Website Content Beheer</h1>
-                            <button class="btn-primary" onclick="alert('Nieuwe blokken maken kan alleen via de database')">
-                                <i class="fas fa-info-circle"></i> Info
-                            </button>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
-                            <div class="card">
-                                <h3>Pagina Onderdelen</h3>
-                                <div id="cms-list" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                                    Laden...
-                                </div>
-                            </div>
-
-                            <div class="card" id="cms-editor" style="display:none;">
-                                <h3 id="editor-title">Bewerken</h3>
-                                <input type="hidden" id="editor-id">
-
-                                <label style="display:block; margin-top:1rem;">Inhoud</label>
-                                <textarea id="editor-content" rows="10" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: sans-serif;"></textarea>
-
-                                <div style="margin-top: 1rem; text-align: right;">
-                                    <button class="btn-primary" onclick="saveContentBlock()">Opslaan</button>
-                                </div>
-                                <p id="cms-msg" style="margin-top: 10px; text-align: right;"></p>
-                            </div>
-                        </div>
-                    `;
-                    fetchContentBlocks();
-                } else {
-                    content.innerHTML = `<h1>${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}</h1><p>Module wordt gebouwd...</p>`;
-                }
-            }
-
-            // Init
+    <main class="container-fluid" id="app-content">
+        <h1>Welkom Harlyne 👋</h1>
+        <p>Selecteer een module in het menu.</p>
+    </main>
+    <script>
+        // 1. Security Check & Init
+        document.addEventListener("DOMContentLoaded", () => {
             checkAdmin();
+        });
 
-            // 1. HAAL DE BLOKKEN OP
-            async function fetchContentBlocks() {
-                const list = document.getElementById("cms-list");
-                const { data: blocks, error } = await supabaseClient
-                    .from("content_blocks")
-                    .select("*")
-                    .order("section_key");
-
-                if (error) {
-                    list.innerHTML = `<p style="color:red">Fout: ${error.message}</p>`;
-                    return;
-                }
-
-                list.innerHTML = "";
-                blocks.forEach((block) => {
-                    // We maken een knopje voor elk tekstblok
-                    const btn = document.createElement("div");
-                    btn.className = "menu-item"; // Hergebruik je stijl
-                    btn.style.cursor = "pointer";
-                    btn.style.border = "1px solid #eee";
-                    btn.innerHTML = `<strong>${block.label || block.section_key}</strong>`;
-
-                    btn.onclick = () => openEditor(block);
-                    list.appendChild(btn);
-                });
+        async function checkAdmin() {
+            const {
+                data: {session},
+            } = await supabaseClient.auth.getSession();
+            if (!session) {
+                window.location.href = "../index.html";
+                return;
             }
 
-            // 2. OPEN DE EDITOR
-            function openEditor(block) {
-                document.getElementById("cms-editor").style.display = "block";
-                document.getElementById("editor-title").innerText =
-                    "Bewerken: " + (block.label || block.section_key);
-                document.getElementById("editor-id").value = block.id;
-                document.getElementById("editor-content").value =
-                    block.content || "";
-                document.getElementById("cms-msg").innerText = "";
-            }
+            // Role check (optioneel, afhankelijk van je RPC setup)
+            // const { data: role } = await supabaseClient.rpc("get_my_role");
+            // if (role !== "admin" && role !== "superadmin") { ... }
+        }
+    </script>
+</body>
 
-            // 3. OPSLAAN NAAR SUPABASE
-            async function saveContentBlock() {
-                const id = document.getElementById("editor-id").value;
-                const newContent =
-                    document.getElementById("editor-content").value;
-                const msg = document.getElementById("cms-msg");
-
-                msg.innerText = "Opslaan...";
-
-                const { error } = await supabaseClient
-                    .from("content_blocks")
-                    .update({ content: newContent, updated_at: new Date() })
-                    .eq("id", id);
-
-                if (error) {
-                    msg.innerText = "Fout: " + error.message;
-                    msg.style.color = "red";
-                } else {
-                    msg.innerText = "Succesvol opgeslagen! ✅";
-                    msg.style.color = "green";
-                    // Ververs de lijst (optioneel, als je labels aanpasbaar maakt)
-                    fetchContentBlocks();
-                }
-            }
-        </script>
-    </body>
 </html>

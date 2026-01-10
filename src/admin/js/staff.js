@@ -1,48 +1,89 @@
-async function fetchStock() {
-  const list = document.getElementById("stock-table-body");
+// src/admin/js/staff.js
 
-  // Check of de tabel er wel is (veiligheidje)
-  if (!list) return;
+let staffData = []; // Bakje voor de mensen
+let treatmentsData = []; // Bakje voor de opties (voor in de modal)
 
-  // 1. Data ophalen uit Supabase
-  const { data: products, error } = await supabaseClient
-    .from("products")
+function initStaff() {
+  console.log("Staff module gestart...");
+  fetchStaff(); // Haal mensen op
+  fetchTreatments(); // Haal opties op
+}
+
+// 1. Alle behandelingen ophalen (voor de checkboxes straks)
+async function fetchTreatments() {
+  // Let op: we hoeven hier niks in de HTML te zetten,
+  // we hebben deze data alleen nodig voor het geheugen (de variabele).
+
+  const { data, error } = await supabaseClient
+    .from("treatments") // Gewoon de master-lijst
     .select("*")
-    .order("name", { ascending: true });
+    .order("title");
 
-  // 2. Fouten afhandelen
   if (error) {
-    console.error("Fout bij ophalen stock:", error);
-    list.innerHTML = `<tr><td colspan="4" style="padding: 2rem; text-align: center; color: red;">Kon producten niet laden.</td></tr>`;
+    console.error("Fout bij ophalen behandelingen:", error);
+  } else {
+    treatmentsData = data; // ✅ In het juiste bakje!
+    console.log("Behandelingen ingeladen:", data.length);
+  }
+}
+
+// 2. Personeel ophalen (voor de tabel)
+async function fetchStaff() {
+  const list = document.getElementById("staff-list");
+  list.innerHTML =
+    '<tr><td colspan="4" style="text-align:center;">Laden...</td></tr>';
+
+  // We halen iedereen op die géén klant is (dus admin of staff)
+  // Pas dit filter aan als je alleen 'staff' wilt.
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    // .eq("role", "staff")  <-- Zet dit aan als je strikt wilt filteren
+    .order("email"); // Profiles hebben vaak geen titel, dus email of naam is veiliger
+
+  if (error) {
+    list.innerHTML = `<tr><td colspan="4" style="color:red;">Fout: ${error.message}</td></tr>`;
     return;
   }
 
-  // 3. Lijst leegmaken (loading wegpoetsen)
+  staffData = data; // ✅ In het juiste bakje!
+  renderStaffTable(data);
+}
+
+// 3. De Tabel Renderen
+function renderStaffTable(data) {
+  const list = document.getElementById("staff-list");
   list.innerHTML = "";
 
-  // 4. Tabel vullen
-  if (products.length === 0) {
-    list.innerHTML = `<tr><td colspan="4" style="padding: 2rem; text-align: center;">Nog geen producten gevonden.</td></tr>`;
+  if (data.length === 0) {
+    list.innerHTML =
+      '<tr><td colspan="4" style="text-align:center;">Geen personeel gevonden.</td></tr>';
     return;
   }
 
-  products.forEach((product) => {
-    // Status bepalen (bv. rood als voorraad laag is)
-    // We gebruiken 'min_stock_level' uit je database
-    const isLowStock = product.stock_quantity <= (product.min_stock_level || 5);
+  data.forEach((person) => {
+    const row = document.createElement("tr");
+    row.style.borderBottom = "1px solid #eee";
 
-    const statusBadge = isLowStock
-      ? `<span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">Laag</span>`
-      : `<span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">OK</span>`;
+    // Status bolletje 🟢 / 🔴
+    const statusColor = person.is_active ? "green" : "red";
 
-    const row = `
-            <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 1rem;"><strong>${product.name}</strong></td>
-                <td style="padding: 1rem;">€ ${product.price}</td>
-                <td style="padding: 1rem;">${product.stock_quantity} stuks</td>
-                <td style="padding: 1rem;">${statusBadge}</td>
-            </tr>
+    row.innerHTML = `
+            <td style="padding: 12px;">
+                <strong>${person.email}</strong><br>
+                <span style="font-size:0.8em; color:#666;">${person.role || "Geen rol"}</span>
+            </td>
+            <td style="padding: 12px;">
+                <span style="height: 10px; width: 10px; background-color: ${statusColor}; border-radius: 50%; display: inline-block;"></span>
+                ${person.is_active ? "Actief" : "Geblokkeerd"}
+            </td>
+            <td style="padding: 12px; text-align: right;">
+                <button class="btn-edit" style="cursor:pointer;">✏️</button>
+            </td>
         `;
-    list.innerHTML += row;
+
+    // Klik event
+    row.querySelector(".btn-edit").onclick = () => openStaffModal(person);
+    list.appendChild(row);
   });
 }

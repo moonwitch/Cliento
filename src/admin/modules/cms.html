@@ -1,19 +1,63 @@
 <div class="module-container">
     <h1>Content Management (CMS)</h1>
-    <p>Welkom in de CMS module. Hier kun je straks teksten aanpassen.</p>
 
-    <div
-        style="
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        "
-    >
-        <h3>🧪 Test Blok</h3>
-        <p>
-            Als je dit leest, is het bestand succesvol dynamisch ingeladen! 🚀
-        </p>
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem">
+        <div class="card">
+            <h3>Pagina Onderdelen</h3>
+            <div
+                id="cms-list"
+                style="
+                    margin-top: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                "
+            >
+                Laden...
+            </div>
+        </div>
+
+        <div class="card" id="cms-editor" style="display: none">
+            <h3 id="editor-title">Bewerken</h3>
+            <input type="hidden" id="editor-id" />
+            <label style="display: block; margin-top: 1rem"
+                >Titel van het blok</label
+            >
+            <input
+                type="text"
+                id="editor-label"
+                style="
+                    width: 100%;
+                    padding: 10px;
+                    margin-bottom: 1rem;
+                    border: 1px solid #ccc;
+                    border-radius: 5px;
+                    font-weight: bold;
+                "
+            />
+            <div
+                id="editor-container"
+                style="height: 300px; background: white"
+            ></div>
+            <div
+                id="editor-container"
+                style="height: 300px; background: white"
+            ></div>
+
+            <input
+                type="file"
+                id="image-upload"
+                accept="image/*"
+                style="display: none"
+            />
+            <input type="hidden" id="editor-content-hidden" />
+
+            <div style="margin-top: 1rem; text-align: right">
+                <button class="btn-primary" onclick="saveContentBlock()">
+                    Opslaan
+                </button>
+            </div>
+            <p id="cms-msg" style="margin-top: 10px; text-align: right"></p>
+        </div>
     </div>
 </div>
