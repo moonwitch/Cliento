@@ -1,52 +1,32 @@
-<div
-    style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-    "
->
-    <h1
-        style="
-            color: var(--color-primary);
-            font-family: &quot;Playfair Display&quot;, serif;
-        "
-    >
-        Stock Beheer
-    </h1>
-    <button class="btn-primary" onclick="alert('Komt eraan!')">
-        + Nieuw Product
-    </button>
+<div class="module-header">
+    <h2>Voorraadbeheer</h2>
 </div>
 
-<div
-    class="card"
-    style="
-        overflow-x: auto;
-        background: white;
-        padding: 0;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    "
->
-    <table style="width: 100%; border-collapse: collapse; text-align: left">
-        <thead>
-            <tr style="background-color: var(--color-primary); color: white">
-                <th style="padding: 1rem">Product</th>
-                <th style="padding: 1rem">Prijs</th>
-                <th style="padding: 1rem">Voorraad</th>
-                <th style="padding: 1rem">Status</th>
-            </tr>
-        </thead>
-        <tbody id="stock-table-body">
-            <tr>
-                <td
-                    colspan="4"
-                    style="padding: 2rem; text-align: center; color: #888"
-                >
-                    Data aan het ophalen...
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<div style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+    border: 2px dashed #ddd;
+">
+    <div style="font-size: 4rem; margin-bottom: 20px;">📦</div>
+    <h3>Coming Soon</h3>
+    <p style="color: #666; max-width: 400px; margin-bottom: 20px;">
+        Deze module is ingepland voor <strong>Fase 2</strong> van de ontwikkeling.
+        Hier komt later het overzicht van leveranciers en productvoorraden.
+    </p>
+    <button disabled style="
+        background: #ccc;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: not-allowed;
+    ">
+        🚧 Onder Constructie
+    </button>
 </div>

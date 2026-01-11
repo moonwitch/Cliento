@@ -307,7 +307,6 @@ async function handleInviteSubmit(event) {
   console.log("Last Name:", lastName);
 
   // TRUCJE: Maak een tijdelijke client met de PUBLIEKE key (veilig!)
-  // Maar zet persistSession uit, zodat jij ingelogd blijft als admin.
   const tempClient = supabase.createClient(
     window.supabaseClient.supabaseUrl,
     window.supabaseClient.supabaseKey,
