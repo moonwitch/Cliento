@@ -21,6 +21,7 @@ create table if not exists public.profiles (
   first_name TEXT not null,
   last_name TEXT not null,
   full_name TEXT not null,
+  email TEXT not null,
   role user_role default 'client' not null,
   is_active BOOLEAN default true not null,
   updated_at timestamp with time zone default NOW()

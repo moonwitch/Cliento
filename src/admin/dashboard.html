@@ -20,6 +20,7 @@
     <script src="./js/dashboard.js" defer></script>
     <script src="./js/cms.js" defer></script>
     <script src="./js/treatments.js" defer></script>
+    <script src="./js/staff.js" defer></script>
 </head>
 
 <body>
@@ -30,9 +31,11 @@
                     <summary>Dashboard</summary>
 
                     <ul dir="rtl">
-                        <li><a href="#" onclick="loadModule('dashboard')" class="menu-item active" id="nav-dashboard">
+                        <li>
+                            <a href="#" onclick="loadModule('dashboard')" class="menu-item active" id="nav-dashboard">
                                 <i class="fas fa-home"></i> Overzicht
-                            </a></li>
+                            </a>
+                        </li>
                         <li><a href="#" onclick="loadModule('calendar')" class="menu-item" id="nav-calendar">
                                 <i class="fas fa-calendar-alt"></i> Agenda
                             </a></li>
@@ -58,19 +61,19 @@
                     <summary>Management</summary>
 
                     <ul dir="rtl">
-                        <<li><a href="#" onclick="loadModule('staff')" class="menu-item" id="nav-staff">
+                        <li><a href="#" onclick="loadModule('staff')" class="menu-item" id="nav-staff">
                                 <i class="fas fa-user-nurse"></i> Personeel
                             </a>
+                        </li>
+                        <li><a href="#" onclick="loadModule('stock')" class="menu-item" id="nav-stock">
+                                <i class="fas fa-boxes"></i> Stock
+                            </a></li>
+                        <li><a href="#" onclick="loadModule('treatments')" class="menu-item" id="nav-treatments">
+                                <i class="fas fa-syringe"></i> Behandelingen
+                            </a></li>
+                    </ul>
+                </details>
             </li>
-            <li><a href="#" onclick="loadModule('stock')" class="menu-item" id="nav-stock">
-                    <i class="fas fa-boxes"></i> Stock
-                </a></li>
-            <li><a href="#" onclick="loadModule('treatments')" class="menu-item" id="nav-treatments">
-                    <i class="fas fa-syringe"></i> Behandelingen
-                </a></li>
-        </ul>
-        </details>
-        </li>
         </ul>
 
 
