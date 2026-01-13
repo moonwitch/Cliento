@@ -1,135 +1,56 @@
 <!doctype html>
 <html lang="nl">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Cliento | Login</title>
-        <link rel="stylesheet" href="css/style.css" />
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="./js/config.js"></script>
-        <script src="./js/auth.js" defer></script>
-    </head>
-    <body>
-        <div class="auth-wrapper">
-            <div class="auth-card">
-                <h1 id="form-title">Welkom bij Lyn & Skin</h1>
 
-                <div id="login-box">
-                    <p
-                        style="
-                            color: #666;
-                            font-size: 0.9rem;
-                            margin-bottom: 1rem;
-                        "
-                    >
-                        Log in om je afspraken te beheren.
-                    </p>
-                    <input
-                        type="email"
-                        id="login-email"
-                        placeholder="E-mailadres"
-                    />
-                    <input
-                        type="password"
-                        id="login-password"
-                        placeholder="Wachtwoord"
-                    />
-                    <button onclick="handleLogin()" class="btn-primary">
-                        Inloggen
-                    </button>
-                    <div class="switch-text">
-                        Nog geen klant?
-                        <a href="#" onclick="toggleMode()"
-                            >Maak een account aan</a
-                        >
-                    </div>
-                </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lyn & Skin</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/auth.js" defer></script>
+    <script src="./js/loader.js" defer></script>
+    <script src="./js/auth-modal.js" defer></script>
+    <script src="./js/header.js" defer></script>
+</head>
 
-                <div id="register-box" style="display: none">
-                    <p
-                        style="
-                            color: #666;
-                            font-size: 0.9rem;
-                            margin-bottom: 1rem;
-                        "
-                    >
-                        Vul je gegevens in.
-                    </p>
+<body>
+    <!-- Header -->
+    <div id="site-header"></div>
 
-                    <div style="display: flex; gap: 10px">
-                        <input
-                            type="text"
-                            id="reg-firstname"
-                            placeholder="Voornaam"
-                            style="width: 50%"
-                        />
-                        <input
-                            type="text"
-                            id="reg-lastname"
-                            placeholder="Achternaam"
-                            style="width: 50%"
-                        />
-                    </div>
-                    <div style="display: flex; gap: 10px">
-                        <input
-                            type="tel"
-                            id="reg-phone"
-                            placeholder="0xxxxxxxxx"
-                            pattern="0[0-9]{3}[0-9]{3}[0-9]{3}"
-                        />
-                        <input type="date" id="reg-bday" />
-                    </div>
-                    <input
-                        type="email"
-                        id="reg-email"
-                        placeholder="Jouw E-mailadres"
-                    />
+    <!-- Modal slot -->
+    <div id="auth-modal-slot"></div>
 
-                    <input
-                        type="password"
-                        id="reg-password"
-                        placeholder="Kies een wachtwoord"
-                    />
-
-                    <button onclick="handleSignup()" class="btn-primary">
-                        Registreren
-                    </button>
-
-                    <div class="switch-text">
-                        Al een account?
-                        <a href="#" onclick="toggleMode()">Log hier in</a>
-                    </div>
-                </div>
-
-                <p
-                    id="status-msg"
-                    style="
-                        margin-top: 1rem;
-                        text-align: center;
-                        font-size: 0.9rem;
-                    "
-                ></p>
+    <!-- Simple hero / landingspagina -->
+    <section class="hero">
+        <div class="hero-inner">
+            <h1 class="hero-title">Welkom bij Lyn & Skin</h1>
+            <p class="hero-subtitle">Ontdek onze behandelingen en boek je afspraak eenvoudig online.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="pages/treatments.html">Bekijk Behandelingen</a>
+                <a id="hero-login-btn" class="btn btn-outline" href="#" data-open-auth="login">Inloggen</a>
             </div>
         </div>
+    </section>
 
-        <script>
-            function toggleMode() {
-                const login = document.getElementById("login-box");
-                const reg = document.getElementById("register-box");
-                const title = document.getElementById("form-title");
-                const msg = document.getElementById("status-msg");
-                if (msg) msg.innerText = "";
+    <!-- Footer -->
+    <div id="site-footer"></div>
 
-                if (login.style.display === "none") {
-                    login.style.display = "block";
-                    reg.style.display = "none";
-                    title.innerText = "Welkom bij Lyn & Skin";
-                } else {
-                    login.style.display = "none";
-                    reg.style.display = "block";
-                    title.innerText = "Nieuwe Klant";
-                }
-            }
-        </script>
-    </body>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            Promise.all([
+                loadComponent('site-header', 'components/header.html'),
+                loadComponent('auth-modal-slot', 'components/auth-modal.html'),
+                loadComponent('site-footer', 'components/footer.html'),
+            ]).then(() => {
+                initHeader();
+
+                // Optioneel: ?auth=register opent direct registreren
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('auth') === 'register') openAuthModal('register');
+            });
+        });
+    </script>
+</body>
+
 </html>

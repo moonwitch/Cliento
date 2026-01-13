@@ -5,107 +5,168 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard | Lyn & Skin</title>
-    <!--<link rel="stylesheet" href="../css/style.css" />-->
-    <!-- Fluid viewport -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#FFF4E1', text: '#46392F', primary: '#D17B58',
+                            secondary: '#859573', muted: '#F5DCBA', white: '#FFFFFF'
+                        }
+                    },
+                    fontFamily: {serif: ['Playfair Display', 'serif'], sans: ['Lato', 'sans-serif']},
+                    boxShadow: {'glass': '0 20px 40px -15px rgba(70, 57, 47, 0.1)', 'float': '0 10px 30px -5px rgba(70, 57, 47, 0.15)'}
+                }
+            }
+        }
+    </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/config.js"></script>
     <script src="../js/auth.js" defer></script>
-
     <script src="./js/dashboard.js" defer></script>
     <script src="./js/cms.js" defer></script>
     <script src="./js/treatments.js" defer></script>
     <script src="./js/staff.js" defer></script>
+
+    <style>
+        details>summary {
+            list-style: none;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
 </head>
 
-<body>
-    <nav>
-        <ul>
-            <li>
-                <details class="dropdown">
-                    <summary>Dashboard</summary>
+<body class="bg-brand-bg text-brand-text font-sans antialiased min-h-screen flex p-4 gap-6 overflow-hidden">
 
-                    <ul dir="rtl">
-                        <li>
-                            <a href="#" onclick="loadModule('dashboard')" class="menu-item active" id="nav-dashboard">
-                                <i class="fas fa-home"></i> Overzicht
-                            </a>
-                        </li>
-                        <li><a href="#" onclick="loadModule('calendar')" class="menu-item" id="nav-calendar">
-                                <i class="fas fa-calendar-alt"></i> Agenda
-                            </a></li>
-                    </ul>
-                </details>
-            </li>
-            <li>
-                <details class="dropdown">
-                    <summary>CRM</summary>
+    <aside
+        class="w-72 bg-brand-text text-brand-bg flex flex-col rounded-3xl shadow-float p-6 h-[calc(100vh-2rem)] sticky top-4">
+        <div class="mb-10 text-center border-b border-white/10 pb-6">
+            <h2 class="font-serif text-2xl tracking-widest text-brand-primary">LYN & SKIN</h2>
+            <p class="text-xs uppercase tracking-widest opacity-60 mt-1">Admin Panel</p>
+        </div>
 
-                    <ul dir="rtl">
-                        <li><a href="#" onclick="loadModule('clients')" class="menu-item" id="nav-clients">
-                                <i class="fas fa-users"></i> Klanten
-                            </a></li>
-                        <li><a href="#" onclick="loadModule('appointments')" class="menu-item" id="nav-appointments">
-                                <i class="fas fa-calendar-check"></i> Afspraken
-                            </a></li>
-                    </ul>
-                </details>
-            </li>
-            <li>
-                <details class="dropdown">
-                    <summary>Management</summary>
+        <nav class="flex-1 overflow-y-auto space-y-2">
+            <details class="group" open>
+                <summary
+                    class="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
+                    <span class="font-bold tracking-wide text-sm uppercase">Dashboard</span>
+                    <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180 opacity-50"></i>
+                </summary>
+                <ul class="pl-4 mt-1 space-y-1 border-l border-white/10 ml-3">
+                    <li>
+                        <a href="#" onclick="loadModule('overview')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg">
+                            <i class="fas fa-home w-4"></i> Overzicht
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="loadModule('calendar')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg">
+                            <i class="fas fa-calendar-alt w-4"></i> Agenda
+                        </a>
+                    </li>
+                </ul>
+            </details>
 
-                    <ul dir="rtl">
-                        <li><a href="#" onclick="loadModule('staff')" class="menu-item" id="nav-staff">
-                                <i class="fas fa-user-nurse"></i> Personeel
-                            </a>
-                        </li>
-                        <li><a href="#" onclick="loadModule('stock')" class="menu-item" id="nav-stock">
-                                <i class="fas fa-boxes"></i> Stock
-                            </a></li>
-                        <li><a href="#" onclick="loadModule('treatments')" class="menu-item" id="nav-treatments">
-                                <i class="fas fa-syringe"></i> Behandelingen
-                            </a></li>
-                    </ul>
-                </details>
-            </li>
-        </ul>
+            <details class="group" open>
+                <summary
+                    class="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
+                    <span class="font-bold tracking-wide text-sm uppercase">CRM</span>
+                    <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180 opacity-50"></i>
+                </summary>
+                <ul class="pl-4 mt-1 space-y-1 border-l border-white/10 ml-3">
+                    <li><a href="#" onclick="loadModule('clients')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg"><i
+                                class="fas fa-users w-4"></i> Klanten</a></li>
+                    <li><a href="#" onclick="loadModule('appointments')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg"><i
+                                class="fas fa-calendar-check w-4"></i> Afspraken</a></li>
+                </ul>
+            </details>
 
+            <details class="group" open>
+                <summary
+                    class="flex items-center justify-between p-3 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
+                    <span class="font-bold tracking-wide text-sm uppercase">Management</span>
+                    <i class="fas fa-chevron-down text-xs transition-transform group-open:rotate-180 opacity-50"></i>
+                </summary>
+                <ul class="pl-4 mt-1 space-y-1 border-l border-white/10 ml-3">
+                    <li><a href="#" onclick="loadModule('staff')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg"><i
+                                class="fas fa-user-nurse w-4"></i> Personeel</a></li>
+                    <li><a href="#" onclick="loadModule('treatments')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg"><i
+                                class="fas fa-syringe w-4"></i> Behandelingen</a></li>
+                    <li><a href="#" onclick="loadModule('stock')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg"><i
+                                class="fas fa-boxes w-4"></i> Stock</a></li>
+                    <li><a href="#" onclick="loadModule('cms')"
+                            class="flex items-center gap-3 p-2 text-sm opacity-70 hover:opacity-100 hover:text-brand-primary transition-all rounded-lg"><i
+                                class="fas fa-laptop w-4"></i> Website</a></li>
+                </ul>
+            </details>
+        </nav>
 
+        <div class="mt-6 pt-6 border-t border-white/10">
+            <button onclick="handleLogout()"
+                class="w-full flex items-center justify-center gap-2 border border-brand-primary/50 text-brand-primary hover:bg-brand-primary hover:text-white p-3 rounded-full transition-all text-xs font-bold tracking-wider uppercase">
+                <i class="fas fa-sign-out-alt"></i> Uitloggen
+            </button>
+        </div>
+    </aside>
 
-        <button onclick="handleLogout()" class="btn-secondary" style="width: 100%">
-            Uitloggen
-        </button>
-    </nav>
+    <main class="flex-1 overflow-y-auto rounded-3xl relative">
+        <div class="w-full max-w-5xl mx-auto py-12 px-4 flex flex-col items-center">
 
+            <header class="text-center mb-12">
+                <h1 class="font-serif text-4xl text-brand-text mb-2">Welkom Harlyne 👋</h1>
+                <p class="text-brand-secondary italic">Wat gaan we vandaag doen bij Lyn & Skin?</p>
+            </header>
 
-    <main class="container-fluid" id="app-content">
-        <h1>Welkom Harlyne 👋</h1>
-        <p>Selecteer een module in het menu.</p>
+            <div id="module-render-area" class="w-full space-y-6">
+                <div class="glass-card p-10 rounded-3xl text-center">
+                    <p class="text-brand-text/50 animate-pulse">Dashboard laden...</p>
+                </div>
+            </div>
+        </div>
     </main>
+
     <script>
-        // 1. Security Check & Init
         document.addEventListener("DOMContentLoaded", () => {
-            checkAdmin();
+            if (window.supabaseClient) {
+                checkAdmin().then(() => {
+                    // Start direct met het overzicht
+                    if (typeof loadModule === 'function') loadModule('overview');
+                });
+            }
         });
 
         async function checkAdmin() {
-            const {
-                data: {session},
-            } = await supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = "../index.html";
-                return;
-            }
-
-            // Role check (optioneel, afhankelijk van je RPC setup)
-            // const { data: role } = await supabaseClient.rpc("get_my_role");
-            // if (role !== "admin" && role !== "superadmin") { ... }
+            const {data: {session}} = await supabaseClient.auth.getSession();
+            if (!session) window.location.href = "../index.html";
         }
     </script>
 </body>

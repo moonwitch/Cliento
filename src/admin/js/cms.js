@@ -121,8 +121,6 @@ function selectLocalImage() {
 }
 
 async function saveToSupabase(file) {
-  // ... (deze functie kan je letterlijk overnemen uit je vorige bericht) ...
-  // Voor de volledigheid:
   if (!file.type.startsWith("image/")) {
     alert("Alleen afbeeldingen");
     return;

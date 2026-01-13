@@ -1,96 +1,91 @@
 <!doctype html>
 <html lang="nl">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Behandelingen | Cliento</title>
-        <link rel="stylesheet" href="css/style.css" />
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="./js/config.js"></script>
-        <script src="./js/auth.js" defer></script>
-    </head>
-    <body>
-        <nav
-            style="
-                padding: 1rem;
-                border-bottom: 1px solid #ddd;
-                display: flex;
-                justify-content: space-between;
-            "
-        >
-            <a
-                href="dashboard.html"
-                style="text-decoration: none; font-weight: bold"
-                >&larr; Terug naar Dashboard</a
-            >
-            <span>Cliento Behandelingen</span>
-        </nav>
 
-        <div class="container" style="max-width: 1000px; margin: 2rem auto">
-            <h1 style="text-align: center; margin-bottom: 2rem">
-                Kies je Behandeling
-            </h1>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Behandelingen | Cliento</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js" defer></script>
+    <script src="../js/loader.js" defer></script>
+    <script src="../js/auth-modal.js" defer></script>
+    <script src="../js/header.js" defer></script>
+</head>
 
-            <div
-                id="treatment-list"
-                class="grid-container"
-                style="
-                    display: grid;
-                    grid-template-columns: repeat(
-                        auto-fill,
-                        minmax(300px, 1fr)
-                    );
-                    gap: 1.5rem;
-                "
-            >
-                <p>Laden...</p>
-            </div>
+<body>
+    <div id="site-header"></div>
+    <div id="auth-modal-slot"></div>
+
+    <div class="container" style="max-width: 1000px; margin: 2rem auto">
+        <h1 style="text-align: center; margin-bottom: 0.75rem">Kies je Behandeling</h1>
+
+        <!-- Registreer CTA -->
+        <div style="text-align:center; margin: 0 0 1.5rem;">
+            <span style="color: var(--text-muted); margin-right: 8px;">Nieuw bij Lyn & Skin?</span>
+            <a href="#" class="btn btn-outline" data-open-auth="register">Maak een account aan</a>
         </div>
 
-        <script>
-            async function loadTreatments() {
-                // 1. Data ophalen uit Supabase
-                // We sorteren op categorie, zodat het netjes gegroepeerd lijkt
-                const { data: treatments, error } = await supabaseClient
-                    .from("treatments")
-                    .select("*")
-                    .order("category", { ascending: true });
+        <div id="treatment-list" class="grid-container"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+            <p>Laden...</p>
+        </div>
+    </div>
 
-                const container = document.getElementById("treatment-list");
-                container.innerHTML = ""; // "Laden..." weghalen
+    <!-- Footer -->
+    <div id="site-footer"></div>
 
-                if (error) {
-                    console.error(error);
-                    container.innerHTML =
-                        '<p style="color:red">Kon behandelingen niet laden.</p>';
-                    return;
-                }
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            Promise.all([
+                loadComponent('site-header', '../components/header.html'),
+                loadComponent('auth-modal-slot', '../components/auth-modal.html'),
+                loadComponent('site-footer', '../components/footer.html'),
+            ]).then(() => {
+                initHeader();
+                loadTreatments();
+            });
+        });
 
-                // 2. HTML Genereren
-                treatments.forEach((t) => {
-                    const card = `
-                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <span class="badge" style="background: #eee; color: #555; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
-                                ${t.category || "Algemeen"}
-                            </span>
-                            <h3 style="margin-top: 0.5rem;">${t.title}</h3>
-                            <p style="color: #666; font-size: 0.95rem;">${t.description.substring(0, 100)}...</p>
-                        </div>
+        async function loadTreatments() {
+            const {data: treatments, error} = await supabaseClient
+                .from("treatments")
+                .select("*")
+                .order("category", {ascending: true});
 
-                        <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
-                            <span style="font-weight: bold; font-size: 1.1rem;">€ ${t.price}</span>
-                            <a href="treatment-detail.html?id=${t.id}" class="btn-primary" style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.9rem;">
-                                Bekijk & Boek
-                            </a>
-                        </div>
-                    </div>
-                `;
-                    container.innerHTML += card;
-                });
+            const container = document.getElementById("treatment-list");
+            container.innerHTML = "";
+
+            if (error) {
+                console.error(error);
+                container.innerHTML = '<p style="color:red">Kon behandelingen niet laden.</p>';
+                return;
             }
 
-            loadTreatments();
-        </script>
-    </body>
+            treatments.forEach((t) => {
+                const card = `
+            <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <span class="badge" style="background: #eee; color: #555; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">
+                  ${t.category || "Algemeen"}
+                </span>
+                <h3 style="margin-top: 0.5rem;">${t.title}</h3>
+                <p style="color: #666; font-size: 0.95rem;">${(t.description || "").substring(0, 100)}...</p>
+              </div>
+
+              <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 1rem;">
+                <span style="font-weight: bold; font-size: 1.1rem;">€ ${t.price}</span>
+                <a href="treatments-detail.html?id=${t.id}" class="btn-primary" style="text-decoration: none; padding: 0.5rem 1rem; font-size: 0.9rem;">
+                  Bekijk & Boek
+                </a>
+              </div>
+            </div>
+          `;
+                container.innerHTML += card;
+            });
+        }
+    </script>
+</body>
+
 </html>

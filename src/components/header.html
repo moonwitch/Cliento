@@ -1,0 +1,57 @@
+<!-- Component: Site Header -->
+<!-- NL: Commentaar in het Nederlands, code in het Engels -->
+
+<header class="site-header">
+    <div class="site-container">
+        <h2 class="brand">Lyn & Skin</h2>
+
+        <div class="header-actions">
+            <!-- Shown when user has admin-like role -->
+            <a id="admin-link" class="btn btn-outline" href="#" style="display:none">
+                Admin Dashboard
+            </a>
+
+            <!-- Shown when logged in -->
+            <div id="account-dropdown" class="dropdown" style="display:none">
+                <button class="btn btn-outline" data-dropdown-trigger>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+                        style="margin-right:6px">
+                        <path d="M20 21a8 8 0 10-16 0" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" />
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.5" />
+                    </svg>
+                    Mijn Account
+                </button>
+
+                <div class="dropdown-content" data-dropdown-content>
+                    <a id="appointments-link" href="#" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                        Mijn Afspraken
+                    </a>
+
+                    <div class="dropdown-separator"></div>
+
+                    <button type="button" class="dropdown-item" id="header-logout-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M15 17l5-5-5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M20 12H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            <path d="M13 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                        Uitloggen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shown when logged out -->
+            <a id="login-link" class="btn btn-primary" href="#">
+                Inloggen
+            </a>
+        </div>
+    </div>
+</header>

@@ -1,76 +1,120 @@
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h2>Personeel</h2>
+<div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <div>
+        <h2 class="font-serif text-3xl text-brand-text">Personeel</h2>
+        <p class="text-brand-secondary text-sm italic mt-1">Beheer je team en hun specialisaties</p>
+    </div>
+
     <button onclick="openInviteModal()"
-        style="background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-        + Nieuwe Medewerker
+        class="bg-brand-primary hover:bg-[#b86542] text-white px-6 py-3 rounded-full shadow-lg shadow-brand-primary/30 transition-all hover:-translate-y-1 font-bold text-sm tracking-wider uppercase flex items-center gap-2">
+        <i class="fas fa-plus"></i> Nieuwe Medewerker
     </button>
 </div>
 
-<table style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-    <thead>
-        <tr style="background: #f4f4f4; text-align: left;">
-            <th style="padding: 12px; border-bottom: 2px solid #ddd;">Medewerker</th>
-            <th style="padding: 12px; border-bottom: 2px solid #ddd;">Status</th>
-            <th style="padding: 12px; border-bottom: 2px solid #ddd; text-align: right;">Acties</th>
-        </tr>
-    </thead>
-    <tbody id="staff-list">
-        <tr>
-            <td colspan="3" style="padding:20px; text-align:center;">Laden...</td>
-        </tr>
-    </tbody>
-</table>
+<div class="bg-white/80 backdrop-blur-md border border-white/50 rounded-3xl shadow-glass overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-brand-bg/50 border-b border-brand-muted">
+                <tr>
+                    <th class="p-6 text-xs font-bold tracking-widest text-brand-secondary uppercase">Naam</th>
+                    <th class="p-6 text-xs font-bold tracking-widest text-brand-secondary uppercase">Email</th>
+                    <th class="p-6 text-xs font-bold tracking-widest text-brand-secondary uppercase">Status</th>
+                    <th class="p-6 text-right text-xs font-bold tracking-widest text-brand-secondary uppercase">Actie
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="staff-list" class="divide-y divide-brand-muted/30">
+                <tr>
+                    <td colspan="4" class="p-8 text-center text-brand-text/50 italic animate-pulse">Laden...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <div id="staff-modal"
-    style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-brand-text/40 backdrop-blur-sm p-4">
     <div
-        style="background: white; padding: 2rem; border-radius: 8px; width: 500px; max-width: 90%; max-height: 90vh; overflow-y: auto;">
+        class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all scale-100 relative">
 
-        <h3 id="modal-title" style="margin-top:0;">Medewerker</h3>
-
-        <label style="display:block; margin-top:10px;">Email</label>
-        <input type="text" id="s-email" readonly
-            style="width: 100%; padding: 8px; background: #eee; border: 1px solid #ddd; color: #666;">
-
-        <label style="display:block; margin-top:20px; margin-bottom: 10px; font-weight: bold;">Welke behandelingen doet
-            deze persoon?</label>
-        <div id="treatment-chips"
-            style="display: flex; flex-wrap: wrap; gap: 8px; border: 1px solid #eee; padding: 10px; border-radius: 5px;">
-            <span style="color:#999; font-size: 0.9em;">Laden...</span>
+        <div class="bg-brand-bg p-6 border-b border-brand-muted flex justify-between items-center">
+            <h3 id="modal-title" class="font-serif text-xl text-brand-text">Medewerker Bewerken</h3>
+            <button onclick="document.getElementById('staff-modal').style.display='none'"
+                class="text-brand-text/50 hover:text-brand-primary transition-colors text-2xl">&times;</button>
         </div>
 
-        <div style="margin-top: 20px; text-align: right;">
+        <div class="p-8 space-y-6">
+            <div>
+                <label class="block text-xs font-bold text-brand-secondary uppercase tracking-wider mb-2">Email
+                    Adres</label>
+                <input type="email" id="s-email" readonly
+                    class="w-full bg-brand-bg/50 border border-brand-muted rounded-xl px-4 py-3 text-brand-text/60 cursor-not-allowed">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-brand-secondary uppercase tracking-wider mb-3">Behandelingen
+                    & Skills</label>
+                <div id="treatment-chips"
+                    class="flex flex-wrap gap-2 max-h-60 overflow-y-auto p-2 border border-brand-muted/30 rounded-xl bg-brand-bg/20">
+                    <p class="text-xs text-brand-text/50 italic p-2">Laden van behandelingen...</p>
+                </div>
+                <p class="text-xs text-brand-text/40 mt-2 text-center">Klik op een behandeling om deze toe te wijzen.
+                </p>
+            </div>
+        </div>
+
+        <div class="p-6 bg-brand-bg/30 border-t border-brand-muted flex justify-end gap-3">
             <button onclick="document.getElementById('staff-modal').style.display='none'"
-                style="background: #ccc; border: none; padding: 8px 15px; cursor: pointer; margin-right: 10px;">Sluiten</button>
-            <button id="btn-save-staff" onclick="saveStaff()" class="btn-primary">Opslaan</button>
+                class="px-6 py-2 rounded-full text-sm font-bold text-brand-text/60 hover:bg-brand-muted/50 transition-colors">Annuleren</button>
+            <button id="btn-save-staff" onclick="saveStaff()"
+                class="bg-brand-primary hover:bg-[#b86542] text-white px-8 py-2 rounded-full shadow-lg shadow-brand-primary/20 font-bold text-sm tracking-wide transition-all">Opslaan</button>
         </div>
     </div>
 </div>
 
-<div id="invite-modal">
-    <h3>Nieuwe Collega Uitnodigen</h3>
-    <p>
-        Stuur een uitnodiging per e-mail. De collega kan zelf een wachtwoord instellen.
-    </p>
+<div id="invite-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-brand-text/40 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative">
 
-    <form id="invite-form" onsubmit="handleInviteSubmit(event)">
-        <label>Voornaam</label>
-        <input type="text" id="inv-firstname" required>
-        <label>Achternaam</label>
-        <input type="text" id="inv-lastname" required>
+        <div class="bg-brand-bg p-6 border-b border-brand-muted text-center">
+            <div
+                class="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-brand-primary text-xl">
+                <i class="fas fa-paper-plane"></i>
+            </div>
+            <h3 class="font-serif text-xl text-brand-text">Collega Uitnodigen</h3>
+            <p class="text-xs text-brand-secondary mt-1">Maak een account aan voor je teamlid</p>
+        </div>
 
-        <label>E-mailadres</label>
-        <input type="email" id="inv-email" required placeholder="naam@lyne-skin.be">
+        <form id="invite-form" onsubmit="handleInviteSubmit(event)" class="p-8 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-brand-secondary uppercase mb-1">Voornaam</label>
+                    <input type="text" id="inv-firstname" required
+                        class="w-full border border-brand-muted rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-brand-secondary uppercase mb-1">Achternaam</label>
+                    <input type="text" id="inv-lastname" required
+                        class="w-full border border-brand-muted rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all">
+                </div>
+            </div>
 
-        <div id="invite-status"></div>
+            <div>
+                <label class="block text-xs font-bold text-brand-secondary uppercase mb-1">Email Adres</label>
+                <input type="email" id="inv-email" required
+                    class="w-full border border-brand-muted rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all">
+            </div>
 
-        <div>
-            <button type="button" onclick="closeInviteModal()">
+            <div id="invite-status" class="text-center text-xs font-bold min-h-[20px]"></div>
+
+            <button type="submit" id="btn-send-invite"
+                class="w-full bg-brand-secondary hover:bg-[#6b7a5b] text-white py-3 rounded-xl font-bold tracking-wide shadow-lg transition-all mt-2">
+                Account Aanmaken
+            </button>
+
+            <button type="button" onclick="closeInviteModal()"
+                class="w-full text-xs text-brand-text/50 hover:text-brand-text font-bold mt-4 uppercase tracking-wider">
                 Annuleren
             </button>
-            <button type="submit" id="btn-send-invite">
-                Verstuur Uitnodiging
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>

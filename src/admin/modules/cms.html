@@ -1,63 +1,56 @@
-<div class="module-container">
-    <h1>Content Management (CMS)</h1>
+<div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <div>
+        <h2 class="font-serif text-3xl text-brand-text">Website Content</h2>
+        <p class="text-brand-secondary text-sm italic mt-1">Pas teksten en afbeeldingen aan</p>
+    </div>
+</div>
 
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem">
-        <div class="card">
-            <h3>Pagina Onderdelen</h3>
-            <div
-                id="cms-list"
-                style="
-                    margin-top: 1rem;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.5rem;
-                "
-            >
-                Laden...
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+    <div class="bg-white/80 backdrop-blur-md border border-white/50 rounded-3xl shadow-glass p-6">
+        <h4
+            class="font-bold text-xs uppercase tracking-widest text-brand-secondary mb-4 border-b border-brand-muted pb-2">
+            Pagina Secties</h4>
+        <div id="cms-list" class="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+            <p class="text-sm italic text-brand-text/50">Laden...</p>
+        </div>
+    </div>
+
+    <div id="cms-editor"
+        class="lg:col-span-2 bg-white rounded-3xl shadow-2xl border border-brand-muted hidden overflow-hidden">
+
+        <div class="bg-brand-bg p-6 border-b border-brand-muted flex justify-between items-center">
+            <h3 id="editor-title" class="font-serif text-xl text-brand-text">Bewerken</h3>
+            <div id="cms-msg" class="text-xs font-bold"></div>
+        </div>
+
+        <div class="p-6 space-y-6">
+            <input type="hidden" id="editor-id">
+            <input type="file" id="image-upload" hidden accept="image/*">
+
+            <div>
+                <label class="block text-xs font-bold text-brand-secondary uppercase mb-1">Titel / Label</label>
+                <input type="text" id="editor-label"
+                    class="w-full border border-brand-muted rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-all font-serif text-lg">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-brand-secondary uppercase mb-1">Inhoud</label>
+                <div class="bg-white border border-brand-muted rounded-xl overflow-hidden">
+                    <div id="editor-container" style="height: 300px; font-family: 'Lato', sans-serif;"></div>
+                </div>
+                <p class="text-xs text-brand-text/40 mt-2 flex items-center gap-1">
+                    <i class="fas fa-info-circle"></i> Tip: Selecteer tekst om dikgedrukt te maken of koppen toe te
+                    voegen.
+                </p>
             </div>
         </div>
 
-        <div class="card" id="cms-editor" style="display: none">
-            <h3 id="editor-title">Bewerken</h3>
-            <input type="hidden" id="editor-id" />
-            <label style="display: block; margin-top: 1rem"
-                >Titel van het blok</label
-            >
-            <input
-                type="text"
-                id="editor-label"
-                style="
-                    width: 100%;
-                    padding: 10px;
-                    margin-bottom: 1rem;
-                    border: 1px solid #ccc;
-                    border-radius: 5px;
-                    font-weight: bold;
-                "
-            />
-            <div
-                id="editor-container"
-                style="height: 300px; background: white"
-            ></div>
-            <div
-                id="editor-container"
-                style="height: 300px; background: white"
-            ></div>
-
-            <input
-                type="file"
-                id="image-upload"
-                accept="image/*"
-                style="display: none"
-            />
-            <input type="hidden" id="editor-content-hidden" />
-
-            <div style="margin-top: 1rem; text-align: right">
-                <button class="btn-primary" onclick="saveContentBlock()">
-                    Opslaan
-                </button>
-            </div>
-            <p id="cms-msg" style="margin-top: 10px; text-align: right"></p>
+        <div class="p-6 bg-brand-bg/30 border-t border-brand-muted flex justify-end">
+            <button onclick="saveContentBlock()"
+                class="bg-brand-primary hover:bg-[#b86542] text-white px-8 py-3 rounded-full shadow-lg font-bold text-sm tracking-wide transition-all flex items-center gap-2">
+                <i class="fas fa-save"></i> Opslaan
+            </button>
         </div>
     </div>
 </div>

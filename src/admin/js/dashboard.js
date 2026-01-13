@@ -5,7 +5,7 @@ const moduleConfig = new Map();
 
 moduleConfig.set("dashboard", {
   title: "Dashboard",
-  path: "../dashboard.html",
+  path: "./modules/overview.html",
 });
 
 moduleConfig.set("cms", {
@@ -26,13 +26,34 @@ moduleConfig.set("treatments", {
   function: "initTreatments",
 });
 
+// Agenda koppelen (gebruikt waarschijnlijk extern script of overview)
+moduleConfig.set("calendar", {
+  title: "Agenda",
+  path: "./modules/overview.html", // Of naar een calendar.html als je die hebt
+});
+
+// Clients & Appointments (voorlopig naar overview sturen of placeholder)
+moduleConfig.set("clients", {
+  title: "Klanten",
+  path: "./modules/overview.html",
+});
+moduleConfig.set("appointments", {
+  title: "Afspraken",
+  path: "./modules/overview.html",
+});
+
 // 2. De Router
 async function loadModule(moduleName) {
-  const content = document.getElementById("app-content");
+  const content = document.getElementById("module-render-area");
+
+  if (!content) {
+    console.error("Kan container 'module-render-area' niet vinden in HTML.");
+    return;
+  }
 
   // Check of de module bestaat
   if (!moduleConfig.has(moduleName)) {
-    content.innerHTML = `<p>Module niet gevonden: ${moduleName}</p>`;
+    content.innerHTML = `<p>${moduleName} is nog in opbouw!</p>`;
     return;
   }
 

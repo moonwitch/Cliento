@@ -1,0 +1,51 @@
+<!-- Auth Modal -->
+<!-- NL: Commentaar in het Nederlands, code in het Engels -->
+
+<div id="auth-modal" class="modal-overlay" style="display:none" data-modal-overlay>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-header">
+      <h3 id="auth-modal-title" class="modal-title">Welkom bij Lyn & Skin</h3>
+      <button class="modal-close" type="button" aria-label="Sluiten" data-modal-close>&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div id="login-box">
+        <p class="modal-subtitle">Log in om je afspraken te beheren.</p>
+
+        <input type="email" id="login-email" placeholder="E-mailadres" class="modal-input" />
+        <input type="password" id="login-password" placeholder="Wachtwoord" class="modal-input" />
+
+        <button onclick="handleLogin()" class="btn btn-primary" style="width:100%">Inloggen</button>
+
+        <div class="switch-text">
+          Nog geen klant? <a href="#" onclick="toggleAuthMode()">Maak een account aan</a>
+        </div>
+      </div>
+
+      <div id="register-box" style="display:none">
+        <p class="modal-subtitle">Vul je gegevens in.</p>
+
+        <div class="modal-row">
+          <input type="text" id="reg-firstname" placeholder="Voornaam" class="modal-input" />
+          <input type="text" id="reg-lastname" placeholder="Achternaam" class="modal-input" />
+        </div>
+
+        <div class="modal-row">
+          <input type="tel" id="reg-phone" placeholder="0xxxxxxxxx" pattern="0[0-9]{3}[0-9]{3}[0-9]{3}" class="modal-input" />
+          <input type="date" id="reg-bday" class="modal-input" />
+        </div>
+
+        <input type="email" id="reg-email" placeholder="Jouw E-mailadres" class="modal-input" />
+        <input type="password" id="reg-password" placeholder="Kies een wachtwoord" class="modal-input" />
+
+        <button onclick="handleSignup()" class="btn btn-primary" style="width:100%">Registreren</button>
+
+        <div class="switch-text">
+          Al een account? <a href="#" onclick="toggleAuthMode()">Log hier in</a>
+        </div>
+      </div>
+
+      <p id="status-msg" class="modal-status"></p>
+    </div>
+  </div>
+</div>

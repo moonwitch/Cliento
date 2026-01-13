@@ -1,143 +1,107 @@
 <!doctype html>
 <html lang="nl">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Details | Cliento</title>
-        <link rel="stylesheet" href="css/style.css" />
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="./js/config.js"></script>
-        <script src="./js/auth.js" defer></script>
-    </head>
-    <body>
-        <nav style="padding: 1rem; border-bottom: 1px solid #ddd">
-            <a href="treatments.html">&larr; Terug naar overzicht</a>
-        </nav>
 
-        <div class="container" style="max-width: 800px; margin: 3rem auto">
-            <div id="loading" style="text-align: center">
-                Details ophalen...
-            </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Details | Cliento</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js" defer></script>
+    <script src="../js/loader.js" defer></script>
+    <script src="../js/auth-modal.js" defer></script>
+    <script src="../js/header.js" defer></script>
+</head>
 
-            <div id="content" style="display: none">
-                <div class="card">
-                    <span
-                        id="t-category"
-                        style="
-                            text-transform: uppercase;
-                            letter-spacing: 1px;
-                            color: #888;
-                            font-size: 0.8rem;
-                            font-weight: bold;
-                        "
-                    ></span>
-                    <h1
-                        id="t-title"
-                        style="margin-top: 0.5rem; font-size: 2rem"
-                    >
-                        ...
-                    </h1>
+<body>
+    <div id="site-header"></div>
+    <div id="auth-modal-slot"></div>
 
-                    <div
-                        style="
-                            display: flex;
-                            gap: 2rem;
-                            margin-top: 1rem;
-                            color: #555;
-                        "
-                    >
-                        <span>⏱️ <span id="t-duration"></span> min</span>
-                        <span>🏷️ € <span id="t-price"></span></span>
-                    </div>
+    <div style="max-width: 800px; margin: 1rem auto 0; padding: 0 1rem;">
+        <a href="treatments.html" style="text-decoration:none; color: var(--brand-primary);">&larr; Terug naar
+            overzicht</a>
+    </div>
 
-                    <hr
-                        style="
-                            margin: 2rem 0;
-                            border: 0;
-                            border-top: 1px solid #eee;
-                        "
-                    />
+    <div class="container" style="max-width: 800px; margin: 1rem auto 3rem;">
+        <div id="loading" style="text-align: center">Details ophalen...</div>
 
-                    <h3>Beschrijving</h3>
-                    <p
-                        id="t-desc"
-                        style="
-                            line-height: 1.6;
-                            color: #444;
-                            margin-bottom: 2rem;
-                        "
-                    >
-                        ...
-                    </p>
+        <div id="content" style="display: none">
+            <div class="card">
+                <span id="t-category"
+                    style="text-transform: uppercase; letter-spacing: 1px; color: #888; font-size: 0.8rem; font-weight: bold;"></span>
+                <h1 id="t-title" style="margin-top: 0.5rem; font-size: 2rem">...</h1>
 
-                    <button
-                        id="book-btn"
-                        class="btn-primary"
-                        style="width: 100%; padding: 1rem; font-size: 1.2rem"
-                    >
-                        📅 Maak een afspraak
-                    </button>
-
-                    <p
-                        style="
-                            text-align: center;
-                            font-size: 0.8rem;
-                            color: #999;
-                            margin-top: 1rem;
-                        "
-                    >
-                        Je wordt doorgestuurd naar de agenda.
-                    </p>
+                <div style="display: flex; gap: 2rem; margin-top: 1rem; color: #555;">
+                    <span>⏱️ <span id="t-duration"></span> min</span>
+                    <span>🏷️ € <span id="t-price"></span></span>
                 </div>
+
+                <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;" />
+
+                <h3>Beschrijving</h3>
+                <p id="t-desc" style="line-height: 1.6; color: #444; margin-bottom: 2rem;">...</p>
+
+                <button id="book-btn" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.2rem">
+                    📅 Maak een afspraak
+                </button>
+
+                <p style="text-align: center; font-size: 0.8rem; color: #999; margin-top: 1rem;">
+                    Je wordt doorgestuurd naar de agenda.
+                </p>
             </div>
         </div>
+    </div>
 
-        <script>
-            async function loadDetail() {
-                // 1. ID uit URL vissen
-                const params = new URLSearchParams(window.location.search);
-                const id = params.get("id");
+    <!-- Footer -->
+    <div id="site-footer"></div>
 
-                if (!id) {
-                    document.getElementById("loading").innerText =
-                        "Geen behandeling gekozen.";
-                    return;
-                }
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            Promise.all([
+                loadComponent('site-header', '../components/header.html'),
+                loadComponent('auth-modal-slot', '../components/auth-modal.html'),
+                loadComponent('site-footer', '../components/footer.html'),
+            ]).then(() => {
+                initHeader();
+                loadDetail();
+            });
+        });
 
-                // 2. Data ophalen
-                const { data: treatment, error } = await supabaseClient
-                    .from("treatments")
-                    .select("*")
-                    .eq("id", id)
-                    .single();
+        async function loadDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
 
-                if (error || !treatment) {
-                    document.getElementById("loading").innerText =
-                        "Behandeling niet gevonden.";
-                    return;
-                }
-
-                // 3. Pagina vullen
-                document.getElementById("t-title").innerText = treatment.title;
-                document.getElementById("t-category").innerText =
-                    treatment.category || "Behandeling";
-                document.getElementById("t-desc").innerText =
-                    treatment.description;
-                document.getElementById("t-duration").innerText =
-                    treatment.duration_minutes;
-                document.getElementById("t-price").innerText = treatment.price;
-
-                // 4. Knop instellen (Linkt door naar de boekingspagina mét ID)
-                document.getElementById("book-btn").onclick = () => {
-                    window.location.href = `book.html?treatment=${treatment.id}`;
-                };
-
-                // 5. Zichtbaar maken
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("content").style.display = "block";
+            if (!id) {
+                document.getElementById("loading").innerText = "Geen behandeling gekozen.";
+                return;
             }
 
-            loadDetail();
-        </script>
-    </body>
+            const {data: treatment, error} = await supabaseClient
+                .from("treatments")
+                .select("*")
+                .eq("id", id)
+                .single();
+
+            if (error || !treatment) {
+                document.getElementById("loading").innerText = "Behandeling niet gevonden.";
+                return;
+            }
+
+            document.getElementById("t-title").innerText = treatment.title;
+            document.getElementById("t-category").innerText = treatment.category || "Behandeling";
+            document.getElementById("t-desc").innerText = treatment.description || "";
+            document.getElementById("t-duration").innerText = treatment.duration_minutes;
+            document.getElementById("t-price").innerText = treatment.price;
+
+            document.getElementById("book-btn").onclick = () => {
+                window.location.href = `book.html?treatment=${treatment.id}`;
+            };
+
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("content").style.display = "block";
+        }
+    </script>
+</body>
+
 </html>

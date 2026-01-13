@@ -19,19 +19,16 @@ async function handleLogin() {
 
     console.log("Inloggen auth gelukt, nu rol ophalen...");
 
-    // 2. De database vragen: Welke rol heeft deze user?
     const { data: role, error: roleError } =
       await supabaseClient.rpc("get_my_role");
-
     if (roleError) throw roleError;
 
     console.log("Gebruiker is ingelogd als:", role);
 
-    // 3. De Verkeersregelaar: Stuur ze naar de juiste pagina
     if (["admin", "superadmin", "employee"].includes(role)) {
       window.location.href = "/admin/dashboard.html";
     } else {
-      window.location.href = "/dashboard.html";
+      window.location.href = "/user-dashboard.html";
     }
   } catch (error) {
     console.error("Er ging iets mis:", error.message);
@@ -77,10 +74,11 @@ async function handleSignup() {
     statusMsg.innerText = "Gelukt! Je kan nu inloggen.";
     statusMsg.style.color = "green";
     setTimeout(() => {
-      // Ga terug naar login scherm
-      toggleMode();
-      document.getElementById("login-email").value = email;
-    }, 1500);
+      // NL: Wissel naar login in het modal (en prefills email)
+      if (typeof toggleAuthMode === "function") toggleAuthMode();
+      const loginEmail = document.getElementById("login-email");
+      if (loginEmail) loginEmail.value = email;
+    }, 1200);
   }
 }
 
