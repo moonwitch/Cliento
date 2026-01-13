@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Behandelingen | Cliento</title>
     <link rel="stylesheet" href="../css/style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../js/config.js"></script>
-    <script src="../js/auth.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="../js/config.js" defer></script>
     <script src="../js/loader.js" defer></script>
+    <script src="../js/auth.js" defer></script>
     <script src="../js/auth-modal.js" defer></script>
     <script src="../js/header.js" defer></script>
+    <script src="../js/app.js" defer></script>
 </head>
 
 <body>
@@ -21,7 +22,6 @@
     <div class="container" style="max-width: 1000px; margin: 2rem auto">
         <h1 style="text-align: center; margin-bottom: 0.75rem">Kies je Behandeling</h1>
 
-        <!-- Registreer CTA -->
         <div style="text-align:center; margin: 0 0 1.5rem;">
             <span style="color: var(--text-muted); margin-right: 8px;">Nieuw bij Lyn & Skin?</span>
             <a href="#" class="btn btn-outline" data-open-auth="register">Maak een account aan</a>
@@ -33,19 +33,11 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <div id="site-footer"></div>
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-            Promise.all([
-                loadComponent('site-header', '../components/header.html'),
-                loadComponent('auth-modal-slot', '../components/auth-modal.html'),
-                loadComponent('site-footer', '../components/footer.html'),
-            ]).then(() => {
-                initHeader();
-                loadTreatments();
-            });
+            loadTreatments();
         });
 
         async function loadTreatments() {
@@ -63,7 +55,7 @@
                 return;
             }
 
-            treatments.forEach((t) => {
+            (treatments || []).forEach((t) => {
                 const card = `
             <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
               <div>

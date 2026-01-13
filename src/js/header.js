@@ -1,8 +1,11 @@
 // Header controller
-// NL-commentaar: Initialiseert de header UI op basis van Supabase sessie/rol
+// Initialiseert de header UI op basis van Supabase sessie/rol
+// - Eén control: "Mijn Account" rechtsboven
+// - Niet ingelogd: opent auth modal
+// - Ingelogd: toont dropdown met "Mijn afspraken" en "Uitloggen"
 
 function resolveBase() {
-  // NL: Als we in /pages/ zitten, ga 1 map omhoog voor root-files
+  // Als we in /pages/ zitten, ga 1 map omhoog voor root-files
   if (location.pathname.includes("/pages/")) return "..";
   return ".";
 }
@@ -11,55 +14,59 @@ function initHeader() {
   const base = resolveBase();
 
   // DOM refs
-  const loginLink = document.getElementById("login-link");
-  const accountDropdown = document.getElementById("account-dropdown");
   const adminLink = document.getElementById("admin-link");
-  const trigger = accountDropdown?.querySelector("[data-dropdown-trigger]");
-  const content = accountDropdown?.querySelector("[data-dropdown-content]");
+  const accountControl = document.getElementById("account-control");
+  const accountTrigger = document.getElementById("account-trigger");
+  const accountMenu = document.getElementById("account-menu");
   const logoutBtn = document.getElementById("header-logout-btn");
   const apptsLink = document.getElementById("appointments-link");
   const brand = document.querySelector(".site-header .brand");
 
-  // NL: Brand-klik terug naar home
+  // Brand-klik terug naar home
   if (brand)
     brand.addEventListener(
       "click",
       () => (window.location.href = `${base}/index.html`),
     );
 
-  // NL: Zet veilige, context-onafhankelijke links
-  if (loginLink) loginLink.href = `${base}/index.html`;
+  // Zet veilige, context-onafhankelijke links
   if (apptsLink) apptsLink.href = `${base}/user-dashboard.html`;
   if (adminLink) adminLink.href = `${base}/admin/dashboard.html`;
 
-  // NL: Inloggen opent modal als beschikbaar; anders valt terug op href
-  if (loginLink) {
-    loginLink.addEventListener("click", (e) => {
-      if (typeof openAuthModal === "function") {
-        e.preventDefault();
-        openAuthModal("login");
-      }
-    });
+  // State
+  let isAuthenticated = false;
+
+  // Dropdown helpers
+  function setMenuOpen(open) {
+    if (!accountMenu) return;
+    if (open) accountMenu.classList.add("open");
+    else accountMenu.classList.remove("open");
   }
 
-  // NL: Dropdown gedrag
-  function setDropdownOpen(open) {
-    if (!content) return;
-    if (open) content.classList.add("open");
-    else content.classList.remove("open");
+  function toggleMenu() {
+    if (!accountMenu) return;
+    accountMenu.classList.toggle("open");
   }
 
+  // Click buiten menu sluit
   document.addEventListener("click", (e) => {
-    if (content && accountDropdown && !accountDropdown.contains(e.target)) {
-      setDropdownOpen(false);
+    if (accountControl && !accountControl.contains(e.target)) {
+      setMenuOpen(false);
     }
   });
 
-  trigger?.addEventListener("click", (e) => {
+  // Trigger gedrag: bij niet ingelogd => modal openen; bij ingelogd => dropdown togglen
+  accountTrigger?.addEventListener("click", (e) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      if (typeof openAuthModal === "function") openAuthModal("login");
+      return;
+    }
     e.stopPropagation();
-    content?.classList.toggle("open");
+    toggleMenu();
   });
 
+  // Logout
   logoutBtn?.addEventListener("click", () => {
     if (typeof handleLogout === "function") {
       handleLogout();
@@ -70,7 +77,7 @@ function initHeader() {
     }
   });
 
-  // NL: Auth-state toepassen
+  // Supabase aanwezig?
   if (!window.supabaseClient) {
     console.warn(
       "Supabase client niet gevonden. Laad config.js vóór header.js",
@@ -78,18 +85,20 @@ function initHeader() {
     return;
   }
 
-  function applyUI(isIn) {
-    if (loginLink) loginLink.style.display = isIn ? "none" : "inline-flex";
-    if (accountDropdown)
-      accountDropdown.style.display = isIn ? "block" : "none";
-    if (!isIn && adminLink) adminLink.style.display = "none";
+  // Auth toepassen
+  function applyUI(auth) {
+    isAuthenticated = !!auth;
+    // Verberg admin link standaard
+    if (adminLink && !isAuthenticated) adminLink.style.display = "none";
+    // Sluit altijd het menu bij state change
+    setMenuOpen(false);
   }
 
+  // Initiele sessie + rol
   supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
-    const isIn = !!session;
-    applyUI(isIn);
+    applyUI(!!session);
 
-    if (isIn) {
+    if (session) {
       try {
         const { data: role, error } = await supabaseClient.rpc("get_my_role");
         if (
@@ -105,9 +114,8 @@ function initHeader() {
     }
   });
 
+  // Luister naar wijzigingen
   supabaseClient.auth.onAuthStateChange((_event, session) => {
-    const isIn = !!session;
-    applyUI(isIn);
-    setDropdownOpen(false);
+    applyUI(!!session);
   });
 }
