@@ -1,7 +1,9 @@
 import { IconBox } from "../../components/blocks.js";
 
 export async function UserDashboard() {
-  const user = window.supabaseClient.auth.user();
+  const {
+    data: { user },
+  } = await window.supabaseClient.auth.getUser();
   if (!user)
     return `<div class="text-center p-5">Je bent niet ingelogd. <a href="#" onclick="document.querySelector('.modal-overlay').style.display='flex'">Log in</a></div>`;
 
@@ -15,7 +17,7 @@ export async function UserDashboard() {
     window.supabaseClient
       .from("appointments")
       .select("*, treatments(title, duration, price)")
-      .eq("client_id", user.id)
+      .eq("id", user.id)
       .order("start_time", { ascending: true }),
   ]);
 
