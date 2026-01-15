@@ -4,20 +4,14 @@
 -- ================================================================
 
 -- FAKE MEDEWERKER & KLANTEN
--- We voegen eerst een fake user toe aan auth.users
--- Wachtwoord is 'password' (versleuteld)
-INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-VALUES
-  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'sofie@lynskin.be', '$2a$10$6gPtvpqCAiwavx1EOnjIgOykKMgzRdiBuejUQGIRRjvUi/ZgMh.9C', now(), '{"first_name": "Sofie", "last_name": "Peeters", "role": "employee"}'),
-  ('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380b22', 'mark@lynskin.be', '$2a$10$6gPtvpqCAiwavx1EOnjIgOykKMgzRdiBuejUQGIRRjvUi/ZgMh.9C', now(), '{"first_name": "Mark", "last_name": "Admin", "role": "admin"}')
-ON CONFLICT (id) DO NOTHING;
-
 -- Voeg extra klanten toe (CRM)
 INSERT INTO public.clients (first_name, last_name, email, phone, notes)
 VALUES
   ('Lisa', 'Willems', 'lisa@example.com', '0471234567', 'Gevoelige huid, allergisch aan noten.'),
   ('Tom', 'Janssens', 'tom@example.com', '0479988776', 'Komt voor rugklachten.'),
-  ('Emma', 'De Smet', 'emma@example.com', '0475556666', 'Nieuwe klant via Instagram.');
+  ('Emma', 'De Smet', 'emma@example.com', '0475556666', 'Nieuwe klant via Instagram.'),
+  ('Jeanine', 'Geerts', 'JGeerts@telenet.be', '09876513', ''),
+  ('Rudi', 'Leroux', 'rudi.l@example.com', '023456789', 'Atopische eczeem.');
 
 -- 3. KOPPEL SKILLS (Wie kan wat?)
 -- We koppelen Sofie (employee) aan alle gezichtsbehandelingen

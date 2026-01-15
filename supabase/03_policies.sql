@@ -10,7 +10,8 @@ ALTER TABLE public.clients ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.treatments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.staff_treatments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE cpublic.ontent_blocks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.content_blocks ENABLE ROW LEVEL SECURITY;
+
 -- (Storage objects staan standaard al op RLS in Supabase)
 
 -- 2. TABEL POLICIES
@@ -26,7 +27,7 @@ CREATE POLICY "Update own profile" ON public.profiles FOR UPDATE USING (auth.uid
 CREATE POLICY "Staff manage clients" ON public.clients FOR ALL
 USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
-CREATE POLICY "Staff manage treatments" ON treatments FOR ALL
+CREATE POLICY "Staff manage treatments" ON public.treatments FOR ALL
 USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
 CREATE POLICY "Staff manage appointments" ON public.appointments FOR ALL
@@ -38,9 +39,22 @@ USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 CREATE POLICY "Staff manage content" ON public.content_blocks FOR ALL
 USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
+-- 3. APPTS BEHEER
+CREATE POLICY "Clients view own appointments" ON public.appointments
+FOR SELECT USING (auth.uid() = client_id);
+
+CREATE POLICY "Clients make appointments" ON public.appointments
+FOR INSERT WITH CHECK (auth.uid() = client_id);
+
+CREATE POLICY "Clients cancel own appointments" ON public.appointments
+FOR UPDATE USING (auth.uid() = client_id);
+
+CREATE POLICY "Clients edit own profile" ON public.clients
+FOR UPDATE USING (auth.uid() = id); -- id in clients is gekoppeld aan auth.uid
+
 -- 3. PUBLIC ACCESS (Website Bezoekers)
 CREATE POLICY "Public read treatments" ON public.treatments FOR SELECT USING (true);
-CREATE POLICY "Public read content" ON content_blocks FOR SELECT USING (true);
+CREATE POLICY "Public read content" ON public.content_blocks FOR SELECT USING (true);
 
 -- 4. STORAGE POLICIES (Afbeeldingen)
 -- Alleen personeel mag uploaden, wijzigen of verwijderen

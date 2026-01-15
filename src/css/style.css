@@ -1,123 +1,359 @@
 @import "variables.css";
 
-#root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-}
+/* ==========================================================================
+   1. GLOBAL RESET & BASE
+   ========================================================================== */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-weight: var(--weight-regular);
+    line-height: 1.6;
+    margin: 0;
 
-.logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-}
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-        animation: logo-spin infinite 20s linear;
-    }
-}
-
-.card {
-    padding: 2em;
-}
-
-.read-the-docs {
-    color: #888;
-}
-
-/* === Header (Lyn & Skin) ===========================================
-   Commentaar (NL): Header styling met brand-variabelen, glas-effect
-   en kleine UI utilities (btn, dropdown).
-==================================================================== */
-
-.site-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    padding: var(--space-6) 0;
-    /* Glas / licht zwevend gevoel */
-    background: rgba(255, 244, 225, 0.65); /* var(--brand-bg) met alpha */
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.site-container {
-    width: min(1200px, 100% - 2rem);
-    margin: 0 auto;
+    /* STICKY FOOTER FIX */
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.brand {
+h1,
+h2,
+h3,
+h4,
+h5 {
     font-family: var(--font-heading);
     font-weight: var(--weight-bold);
-    font-size: 1.5rem;
     color: var(--text-main);
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    user-select: none;
+    margin-bottom: var(--space-4);
+    line-height: 1.2;
 }
 
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+#root,
+main,
+.main-content {
+    flex: 1;
+    width: 100%;
+}
+
+/* ==========================================================================
+   2. SITE LAYOUT (Header, Hero, Footer)
+   ========================================================================== */
+
+/* --- Site Header --- */
+.site-container {
+    display: flex;
+    justify-content: space-between; /* Zorgt dat Brand links staat en Knoppen rechts */
+    align-items: center; /* Verticaal centreren */
+    width: min(1200px, 100% - 2rem);
+    margin: 0 auto;
+}
+
+/* De container voor Logo + Tekst */
+.brand-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 1;
+    gap: 5px;
+}
+
+/* Het logo */
+.header-logo {
+    height: 65px;
+    width: auto;
+    display: block;
+}
+
+/* De tekst */
+.brand {
+    font-size: 1.4rem;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Knoppen rechts */
 .header-actions {
     display: flex;
+    gap: 15px;
     align-items: center;
-    gap: var(--space-4);
 }
 
-/* Buttons */
-.btn {
+/* --- Hero Section --- */
+.hero {
+    padding: 6rem 1rem 4rem;
+    text-align: center;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 244, 225, 0.7),
+        rgba(255, 255, 255, 0)
+    );
+}
+
+.hero-inner {
+    width: min(900px, 100% - 2rem);
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem); /* Responsive font size */
+    margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* --- Footer --- */
+.site-footer {
+    margin-top: auto; /* Duwt footer naar beneden in flex container */
+    border-top: 1px solid var(--border-color);
+    background: #fffaf4; /* Iets warmere tint dan wit */
+    padding-top: 3rem;
+}
+
+.footer-container {
+    width: min(1200px, 100% - 2rem);
+    margin: 0 auto;
+    display: grid;
+    /* Responsive: 1 kolom op mobiel, 3 op desktop */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    padding-bottom: 3rem;
+}
+
+/* Kolom Titels */
+.footer-heading {
+    font-family: var(--font-heading);
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Adres & Contact tekst */
+.footer-text {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.footer-text i {
+    color: var(--primary);
+    width: 20px; /* Vaste breedte voor uitlijning iconen */
+}
+
+/* Openingsuren Tabel */
+.opening-hours-table {
+    width: 100%;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    border-collapse: collapse;
+}
+.opening-hours-table td {
+    padding: 4px 0;
+}
+.opening-hours-table tr td:first-child {
+    font-weight: bold;
+    width: 100px;
+}
+
+/* Social Media Icons */
+.social-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+.social-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-main);
+    transition: all 0.2s;
+    text-decoration: none;
+}
+.social-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+/* Nieuwsbrief */
+.footer-newsletter-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: white;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1.5rem 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+/* ==========================================================================
+   3. UI COMPONENTS
+   ========================================================================== */
+
+/* --- Cards --- */
+.card {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(233, 211, 186, 0.5); /* Brand border */
+    transition: transform 0.2s;
+}
+
+/* --- Buttons --- */
+.btn,
+.btn-primary,
+.btn-outline,
+.btn-icon {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 0.5rem 0.9rem;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.7rem 1.4rem;
     border-radius: var(--radius-full);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-bold);
-    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
+    text-decoration: none;
     border: 1px solid transparent;
+    font-family: var(--font-body);
 }
 
 .btn-primary {
-    background: var(--primary);
+    background-color: var(--primary);
     color: var(--text-on-primary);
     box-shadow: var(--shadow-sm);
 }
 .btn-primary:hover {
-    background: var(--primary-hover);
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
 }
 
 .btn-outline {
     background: transparent;
+    border-color: var(--border-color);
     color: var(--text-main);
-    border: 1px solid var(--border-color);
 }
 .btn-outline:hover {
-    border-color: color-mix(in srgb, var(--primary) 35%, var(--border-color));
+    border-color: var(--primary);
     color: var(--primary);
 }
 
-/* Dropdown */
+.btn-icon {
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--text-muted);
+}
+.btn-icon:hover {
+    background-color: var(--brand-bg);
+    color: var(--primary);
+}
+.btn-icon.delete:hover {
+    background-color: #ffeeee;
+    color: var(--destructive);
+}
+
+/* --- Inputs & Forms --- */
+.form-input,
+.modal-input,
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    background: #ffffff;
+    box-sizing: border-box;
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.search-input {
+    border-radius: 99px; /* Pill shape */
+    padding: 10px 20px;
+}
+
+.form-input:focus,
+.modal-input:focus,
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(209, 123, 88, 0.1);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--text-muted);
+}
+.form-input:disabled {
+    background-color: #f5f5f5;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* --- Pills / Badges --- */
+.badge,
+.pill-content {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* --- Dropdowns --- */
 .dropdown {
     position: relative;
 }
@@ -132,6 +368,7 @@
     box-shadow: var(--shadow-lg);
     padding: 6px;
     display: none;
+    z-index: 100;
 }
 .dropdown-content.open {
     display: block;
@@ -142,284 +379,109 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 10px;
+    padding: 10px;
     border-radius: var(--radius-md);
     color: var(--text-main);
-    text-decoration: none;
     background: transparent;
     border: none;
     cursor: pointer;
-    font-size: var(--text-sm);
+    font-size: 0.9rem;
+    transition: background 0.15s;
 }
 .dropdown-item:hover {
     background: color-mix(in srgb, var(--brand-muted) 40%, #fff 60%);
 }
-
 .dropdown-separator {
     height: 1px;
     background: var(--border-color);
-    margin: 6px 8px;
-    opacity: 0.8;
+    margin: 6px 0;
+    opacity: 0.5;
 }
-/* === Auth Modal =================================================== */
-/* NL: Modal overlay en card in merkstijl */
 
+/* ==========================================================================
+   4. MODALS (Unified System)
+   ========================================================================== */
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(70, 57, 47, 0.35); /* donkerbruin met alpha */
-    display: none;
+    background: rgba(70, 57, 47, 0.6); /* Brand dark dim */
+    backdrop-filter: blur(4px);
+    display: none; /* JS toggles 'display: flex' or class 'open' */
     align-items: center;
     justify-content: center;
-    z-index: 100;
-    padding: 1rem;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Voor gebruik in je JS: classList.add('open') of style.display='flex' */
+.modal-overlay.open {
+    display: flex;
 }
 
 .modal-card {
+    background: white;
     width: 100%;
-    max-width: 520px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    max-width: 500px;
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
     overflow: hidden;
+    animation: slideUp 0.2s ease-out;
+    position: relative;
 }
 
+/* Header */
 .modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.25rem;
+    padding: 1.25rem;
     border-bottom: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(8px);
+    background: #fafafa;
 }
-
 .modal-title {
     font-family: var(--font-heading);
     font-size: 1.25rem;
     margin: 0;
 }
-
 .modal-close {
-    appearance: none;
     background: transparent;
     border: none;
     font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;
-    color: var(--text-main);
-    opacity: 0.7;
+    color: var(--text-muted);
+    transition: color 0.2s;
 }
 .modal-close:hover {
-    opacity: 1;
+    color: var(--destructive);
 }
 
+/* Body */
 .modal-body {
-    padding: 1.25rem;
+    padding: 1.5rem;
 }
-
 .modal-subtitle {
     color: var(--text-muted);
     font-size: 0.95rem;
     margin-bottom: 1rem;
 }
 
+/* Helpers voor formulieren in modals */
 .modal-row {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
-}
-
-.modal-input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    background: var(--bg-input);
-}
-
-.switch-text {
-    margin-top: 0.75rem;
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-.modal-status {
-    margin-top: 0.75rem;
-    text-align: center;
-    font-size: 0.9rem;
-}
-
-/* === Simple Hero ================================================== */
-.hero {
-    padding: 6rem 1rem 4rem;
-    text-align: center;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 244, 225, 0.7),
-        rgba(255, 255, 255, 0)
-    );
-}
-.hero-inner {
-    width: min(900px, 100% - 2rem);
-    margin: 0 auto;
-}
-.hero-title {
-    font-family: var(--font-heading);
-    font-size: clamp(2rem, 4vw, 3rem);
-    margin-bottom: 0.5rem;
-}
-.hero-subtitle {
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-}
-.hero-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-/* === Footer ======================================================= */
-/* NL: Discrete footer in merkstijl met subtiele scheiding */
-
-.site-footer {
-    margin-top: 4rem;
-    border-top: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(6px);
-}
-
-.footer-container {
-    width: min(1200px, 100% - 2rem);
-    margin: 0 auto;
-    padding: 2rem 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-6);
-    flex-wrap: wrap;
-}
-
-.footer-brand .footer-title {
-    font-family: var(--font-heading);
-    font-weight: var(--weight-bold);
-    font-size: 1.25rem;
-    letter-spacing: 0.06em;
-    color: var(--text-main);
-}
-.footer-text {
-    color: var(--text-muted);
-    margin-top: 0.25rem;
-    font-size: 0.95rem;
-}
-
-.footer-nav {
-    display: flex;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-    align-items: center;
-    padding-top: 0.3rem;
-}
-.footer-nav a {
-    color: var(--text-main);
-    text-decoration: none;
-    font-weight: var(--weight-bold);
-    font-size: 0.95rem;
-    border-bottom: 1px solid transparent;
-}
-.footer-nav a:hover {
-    color: var(--primary);
-    border-color: var(--primary);
-}
-
-/* Nieuwsbrief */
-.footer-newsletter {
-    max-width: 420px;
-    width: 100%;
-}
-.footer-newsletter-title {
-    font-weight: var(--weight-bold);
-    margin-bottom: 0.5rem;
-}
-.footer-newsletter form {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-.footer-newsletter-input {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    background: var(--bg-input);
-}
-.footer-newsletter-msg {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.footer-bottom {
-    border-top: 1px solid var(--border-color);
-    padding: 0.75rem 0;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-/* --- MODAL POPUP STYLING (Essentieel!) --- */
-.modal-overlay {
-    position: fixed; /* Zorgt dat hij zweeft */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(70, 57, 47, 0.6); /* Donkerbruin dimmen */
-    backdrop-filter: blur(4px); /* Blur effect */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* Zorgt dat hij boven ALLES ligt */
-    animation: fadeIn 0.2s ease-out;
-}
-
-.modal-card {
-    background: white;
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 450px; /* Iets breder voor de extra velden */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.2s ease-out;
-    border: 1px solid var(--border-color);
-    position: relative; /* Voor de sluitknop */
-}
-
-/* Knoppen en formulier styling in modal */
-.form-group {
     margin-bottom: 1rem;
 }
-.form-label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 5px;
+.switch-text,
+.modal-status {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
     color: var(--text-muted);
 }
-.form-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-family: inherit;
-    box-sizing: border-box; /* Voorkom dat padding de breedte rekt */
-}
-.form-input:disabled {
-    background-color: #f5f5f5;
-    color: #888;
-    cursor: not-allowed;
-}
 
+/* --- ANIMATIONS --- */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -437,4 +499,45 @@
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+/* --- USER BOOKING CALENDAR --- */
+#booking-calendar {
+    font-family: var(--font-body);
+}
+
+/* Knoppen bovenin de kalender */
+#booking-calendar .fc-button-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    text-transform: capitalize;
+    font-weight: bold;
+}
+#booking-calendar .fc-button-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Vandaag markering */
+#booking-calendar .fc-day-today {
+    background-color: rgba(209, 123, 88, 0.05) !important;
+}
+
+/* Bezette sloten (background events) */
+.busy-slot {
+    background: repeating-linear-gradient(
+        45deg,
+        #e0e0e0,
+        #e0e0e0 10px,
+        #ebebeb 10px,
+        #ebebeb 20px
+    ) !important;
+    opacity: 0.6;
+}
+
+/* De cursor moet veranderen naar pointer op lege plekken */
+#booking-calendar .fc-timegrid-slot-lane {
+    cursor: pointer;
+}
+#booking-calendar .fc-timegrid-slot-lane:hover {
+    background-color: rgba(209, 123, 88, 0.1); /* Lichte hover kleur */
 }

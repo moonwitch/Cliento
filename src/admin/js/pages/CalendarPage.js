@@ -1,6 +1,5 @@
 export async function CalendarPage() {
-  // We retourneren de HTML container, maar starten de kalender pas NA het renderen
-  setTimeout(initCalendar, 100);
+  setTimeout(initCalendar, 100); // Needed lil trick for rendering in nilla JS
 
   return `
     <div class="flex-between">
@@ -19,7 +18,7 @@ export async function CalendarPage() {
     `;
 }
 
-// --- GLOBALE VARIABELEN ---
+// --- VARIABELEN ---
 let calendar;
 
 // --- 1. INITIALISATIE ---
@@ -118,7 +117,6 @@ async function fetchEventsFromSupabase(
       end: appt.end_time,
       classNames: [`status-${appt.status}`],
       extendedProps: {
-        // We slaan de ID's op om de modal goed te vullen
         client_id: appt.client_id,
         staff_id: appt.staff_id,
         treatment_id: appt.treatment_id,
@@ -153,7 +151,7 @@ window.openAppointmentModal = async (
         .from("profiles")
         .select("id, first_name")
         .neq("role", "client"),
-      window.supabaseClient.from("staff_treatments").select("*"), // <--- NIEUW: Skills ophalen
+      window.supabaseClient.from("staff_treatments").select("*"),
       apptId
         ? window.supabaseClient
             .from("appointments")
@@ -287,38 +285,28 @@ window.openAppointmentModal = async (
   }
 };
 
-// --- NIEUWE LOGICA: HANDLERS & FILTERS ---
-
-// Wordt aangeroepen bij wijziging van Treatment Select
+// --- LOGICA: HANDLERS & FILTERS ---
 window.handleTreatmentChange = (selectEl) => {
   const treatmentId = selectEl.value;
-
-  // 1. Tijd updaten
   autoSetEndTime(selectEl);
-
-  // 2. Staff lijst filteren
   updateStaffDropdown(treatmentId);
 };
 
-// Filtert de medewerkers lijst op basis van skills
 function updateStaffDropdown(treatmentId, selectedStaffId = null) {
   const staffSelect = document.getElementById("staff_select");
   staffSelect.innerHTML = '<option value="">Kies...</option>';
 
   if (!treatmentId) {
-    // Fallback: Als er geen behandeling is, toon iedereen (of maak disabled)
     window.allStaff.forEach((s) => {
       staffSelect.innerHTML += `<option value="${s.id}">${s.first_name}</option>`;
     });
     return;
   }
 
-  // Zoek skills
   const allowedStaffIds = window.staffSkills
     .filter((skill) => skill.treatment_id === treatmentId)
     .map((skill) => skill.staff_id);
 
-  // Filter window.allStaff
   const capableStaff = window.allStaff.filter((s) =>
     allowedStaffIds.includes(s.id),
   );

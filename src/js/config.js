@@ -5,8 +5,8 @@ const DEV_URL = "https://xpldxyfyqwwbmfhbcqyv.supabase.co";
 const DEV_KEY = "sb_publishable_-_Or-7aWsRslbRl4Vi-RTA_Ngi6D0Xu";
 
 // PROD: You'll manually swap these or use environment variables in CI/CD later
-const PROD_URL = "https://opwzyuswtztpulzpyomp.supabase.co";
-const PROD_KEY = "sb_publishable_XiohYAtcQys8dqMAn0hH5w_aJSIJuDs";
+const PROD_URL = "https://oprjavcfnfnyvqoxwnyv.supabase.co";
+const PROD_KEY = "sb_publishable_CP5Cl1z7DL8C_jP_tCkBCg_qCIDox40";
 
 // 2. Check where we are running
 const isDev = false;

@@ -1,49 +1,100 @@
 export function Footer() {
-  const year = new Date().getFullYear();
-
   return `
     <footer class="site-footer">
         <div class="footer-container">
-            <div class="footer-brand">
-                <div class="footer-title">LYN & SKIN</div>
-                <p class="footer-text">Schoonheid met aandacht.</p>
+
+            <div>
+                <h4 class="footer-heading">Lyn & Skin</h4>
+                <p class="footer-text">
+                    Jouw moment van rust en huidverbetering.<br>
+                    Persoonlijke aanpak in een ontspannen sfeer.
+                </p>
+                <div style="margin-top: 1.5rem;">
+                    <div class="footer-text"><i class="fas fa-map-marker-alt"></i> Vossekotstraat 30, 3271 Scherpenheuvel-Zichem</div>
+                    <div class="footer-text"><i class="fas fa-phone"></i> +32 494 63 74 93</div>
+                    <div class="footer-text"><i class="fas fa-envelope"></i> info@lynskin.be</div>
+                </div>
+
+                <div class="social-links">
+                    <a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-btn"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://wa.me/32494637493" class="social-btn"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
             </div>
 
-            <nav class="footer-nav">
-                <a href="#" onclick="handleNavigation('treatments'); return false;">Behandelingen</a>
-                <a href="#" onclick="openAuthModal('register'); return false;">Registreren</a>
-                <a href="#" onclick="openAuthModal('login'); return false;">Inloggen</a>
-            </nav>
+            <div>
+                <h4 class="footer-heading">Openingsuren</h4>
+                <table class="opening-hours-table">
+                    <tr><td>Maandag</td><td>09:00 - 21:00</td></tr>
+                    <tr><td>Dinsdag</td><td>09:00 - 21:00</td></tr>
+                    <tr><td>Woensdag</td><td>09:00 - 21:00</td></tr>
+                    <tr><td>Donderdag</td><td>Gesloten</td></tr>
+                    <tr><td>Vrijdag</td><td>09:00 - 18:00</td></tr>
+                    <tr><td>Zaterdag</td><td>13:00 - 18:00</td></tr>
+                    <tr><td>Zondag</td><td>10:00 - 13:00</td></tr>
+                </table>
+            </div>
 
-            <div class="footer-newsletter">
-                <div class="footer-newsletter-title">Nieuwsbrief</div>
-                <form onsubmit="handleNewsletter(event)" style="display:flex; gap:8px;">
-                    <input id="newsletter-email" type="email" required placeholder="Jouw e-mailadres" class="footer-newsletter-input" />
-                    <button type="submit" class="btn btn-primary">Abonneren</button>
+            <div>
+                <h4 class="footer-heading">Blijf op de hoogte</h4>
+                <p class="footer-text">Ontvang als eerste updates over nieuwe behandelingen en promoties.</p>
+
+                <form onsubmit="handleNewsletterSubmit(event)" style="margin-top: 1rem;">
+                    <input type="email" name="email" placeholder="Jouw e-mailadres" class="footer-newsletter-input" required>
+                    <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                        Inschrijven
+                    </button>
+                    <p id="newsletter-msg" style="font-size: 0.85rem; margin-top: 10px; display: none;"></p>
                 </form>
-                <div id="newsletter-msg" class="footer-newsletter-msg"></div>
             </div>
+
         </div>
 
         <div class="footer-bottom">
-            <span>© ${year} Lyn & Skin</span>
+            &copy; ${new Date().getFullYear()} Lyn & Skin. Alle rechten voorbehouden.
         </div>
     </footer>
     `;
 }
 
-// Nieuwsbrief logica (direct hier, lekker clean)
-window.handleNewsletter = async (e) => {
+// --- LOGICA: Nieuwsbrief Inschrijving ---
+window.handleNewsletterSubmit = async (e) => {
   e.preventDefault();
-  const email = document.getElementById("newsletter-email").value;
+  const form = e.target;
+  const btn = form.querySelector("button");
   const msg = document.getElementById("newsletter-msg");
+  const email = form.email.value;
 
-  msg.textContent = "Even geduld...";
+  // UI Feedback
+  const orgText = btn.innerText;
+  btn.innerText = "Bezig...";
+  btn.disabled = true;
+  msg.style.display = "none";
 
-  // Simpele check (later Supabase call hierin zetten)
-  setTimeout(() => {
-    msg.textContent = "Dank je! Je bent ingeschreven.";
-    msg.style.color = "var(--brand-secondary)";
-    document.getElementById("newsletter-email").value = "";
-  }, 1000);
+  try {
+    const { error } = await window.supabaseClient
+      .from("newsletter_subscribers")
+      .insert({ email: email });
+
+    if (error) {
+      // Check voor unieke constraint error (code 23505 in Postgres)
+      if (error.code === "23505") {
+        throw new Error("Dit e-mailadres is al ingeschreven.");
+      }
+      throw error;
+    }
+
+    // Succes!
+    msg.style.color = "var(--primary)";
+    msg.innerText = "Bedankt! Je bent ingeschreven.";
+    msg.style.display = "block";
+    form.reset();
+  } catch (err) {
+    msg.style.color = "#c0392b"; // Rood
+    msg.innerText = err.message || "Er ging iets mis.";
+    msg.style.display = "block";
+  } finally {
+    btn.innerText = orgText;
+    btn.disabled = false;
+  }
 };

@@ -1,237 +1,104 @@
 /* src/css/admin.css */
 
-/* --- 1. DE BASIS LAYOUT --- */
+/* --- 1. LAYOUT --- */
 .admin-container {
     display: flex;
     height: 100vh;
     background-color: var(--brand-bg);
     padding: var(--space-4);
-    gap: var(--space-8);
+    gap: var(--space-6);
     box-sizing: border-box;
-    overflow: hidden; /* Voorkom dubbele scrollbars */
+    overflow: hidden;
 }
 
-/* Fix voor de wrapper die Sidebar.js injecteert */
-.sidebar-wrapper {
+#sidebar-container {
     height: 100%;
-    display: flex; /* Zorgt dat de sidebar de hoogte vult */
+    display: flex;
 }
 
-/* --- 2. DE SIDEBAR (Zwevend & Elegant) --- */
 .sidebar {
-    width: 280px;
-    background-color: var(--bg-sidebar); /* Dark Brown */
+    width: 260px;
+    height: 100%;
+    background-color: var(--bg-sidebar);
+    color: var(--text-light);
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
-    padding: var(--space-8) var(--space-4);
+    padding: var(--space-6);
     box-shadow: var(--shadow-lg);
-    color: var(--text-light);
-    height: 100%; /* Vul de wrapper */
+    flex-shrink: 0;
     box-sizing: border-box;
 }
 
+.main-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+/* --- 2. SIDEBAR NAV --- */
 .sidebar-header {
     text-align: center;
-    margin-bottom: var(--space-12);
+    margin-bottom: 2rem;
 }
-
 .sidebar-header h2 {
-    font-family: var(--font-heading);
     color: var(--primary);
-    letter-spacing: 2px;
     margin: 0;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
 }
 
-/* Navigatie Lijst */
 .sidebar-nav {
     list-style: none;
     padding: 0;
     margin: 0;
     flex-grow: 1;
 }
-
-.nav-item {
-    margin-bottom: var(--space-2);
-    position: relative;
-}
-
 .nav-link {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 20px;
+    padding: 12px 16px;
     color: var(--text-light);
     text-decoration: none;
     border-radius: var(--radius-md);
-    transition: all 0.3s ease;
-    font-weight: var(--weight-light);
-    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.85;
+    font-size: 0.9rem;
 }
-
 .nav-link:hover,
 .nav-link.active {
-    background: rgba(255, 244, 225, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--primary);
+    opacity: 1;
     font-weight: bold;
 }
-
-/* --- 3. MAIN CONTENT (Perfect Centered Canvas) --- */
-.main-content {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto; /* Alleen de content scrollt */
-    position: relative;
+.sidebar-section-title {
+    margin: 1.5rem 0 0.5rem 1rem;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
 }
 
-/* De container die de modules vasthoudt */
-/* Let op: In JS noemen we dit 'app-content', hier passen we CSS aan */
-#app-content,
-#app-container {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    padding-bottom: 2rem;
-}
-
-/* Top Bar */
+/* --- 3. PAGE UTILS --- */
 .top-bar {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-8);
-    padding-top: var(--space-2);
+    display: none;
 }
 
 .text-title {
-    font-family: var(--font-heading);
     font-size: 2rem;
-    color: var(--text-main);
     margin: 0;
+    color: var(--brand-text);
 }
-
 .text-subtitle {
     color: var(--text-muted);
-    font-size: 0.9rem;
     margin: 0;
-}
-
-/* --- 4. CARDS & ELEMENTS --- */
-.card {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 2.5rem;
-    box-shadow: 0 15px 35px rgba(70, 57, 47, 0.05);
-    border: 1px solid rgba(233, 211, 186, 0.3);
-    width: 100%;
-    box-sizing: border-box;
-    transition: transform 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-}
-
-/* --- 5. TABELLEN (NIEUW: Voor TreatmentsPage) --- */
-.table-container {
-    background: #ffffff;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-thead {
-    background-color: rgba(255, 244, 225, 0.5); /* Lichte brand-bg */
-    border-bottom: 2px solid var(--border-color);
-}
-
-th {
-    padding: 1.25rem 1.5rem;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: var(--secondary);
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
-td {
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-main);
     font-size: 0.95rem;
 }
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tr:hover {
-    background-color: rgba(255, 244, 225, 0.3);
-}
-
-/* --- 6. KNOPPEN (NIEUW: Voor Interactie) --- */
-.btn-primary {
-    background-color: var(--primary);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-full);
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    border: none;
-    cursor: pointer;
-    transition:
-        background 0.2s,
-        transform 0.1s;
-    letter-spacing: 1px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(209, 123, 88, 0.3);
-}
-
-/* Icoontjes knoppen (Edit/Delete) */
-.btn-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 8px;
-    color: var(--text-muted);
-    transition: all 0.2s;
-    border-radius: 50%;
-}
-
-.btn-icon:hover {
-    color: var(--primary);
-    background-color: var(--brand-bg);
-}
-
-.btn-icon.delete:hover {
-    color: var(--destructive);
-    background-color: rgba(197, 85, 70, 0.1);
-}
-
-/* Helper Class voor layouts */
 .flex-between {
     display: flex;
     justify-content: space-between;
@@ -239,154 +106,7 @@ tr:hover {
     margin-bottom: 2rem;
 }
 
-/* --- MODAL POPUP STYLING (Essentieel!) --- */
-.modal-overlay {
-    position: fixed; /* Zorgt dat hij zweeft */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(70, 57, 47, 0.6); /* Donkerbruin dimmen */
-    backdrop-filter: blur(4px); /* Blur effect */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* Zorgt dat hij boven ALLES ligt */
-    animation: fadeIn 0.2s ease-out;
-}
-
-.modal-card {
-    background: white;
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 450px; /* Iets breder voor de extra velden */
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.2s ease-out;
-    border: 1px solid var(--border-color);
-    position: relative; /* Voor de sluitknop */
-}
-
-/* Knoppen en formulier styling in modal */
-.form-group {
-    margin-bottom: 1rem;
-}
-.form-label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: var(--text-muted);
-}
-.form-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-family: inherit;
-    box-sizing: border-box; /* Voorkom dat padding de breedte rekt */
-}
-.form-input:disabled {
-    background-color: #f5f5f5;
-    color: #888;
-    cursor: not-allowed;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-@keyframes slideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* --- TREATMENT SELECTOR IN MODAL --- */
-.treatment-section {
-    margin-top: 1.5rem;
-    border-top: 1px solid #eee;
-    padding-top: 1rem;
-}
-
-.treatment-category {
-    font-weight: bold;
-    color: var(--primary);
-    margin: 10px 0 5px 0;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-}
-
-.treatment-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 1rem;
-}
-
-/* De "Pill" Container (het label) */
-.checkbox-pill {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-    font-size: 0.85rem;
-    user-select: none; /* Voorkom blauwe selectie bij dubbelklik */
-}
-
-/* Verberg de originele lelijke checkbox */
-.checkbox-pill input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-}
-
-/* De eigenlijke zichtbare pil */
-.pill-content {
-    background-color: #f4f4f4; /* Neutraal grijs als niet geselecteerd */
-    color: var(--text-muted);
-    padding: 6px 16px;
-    border-radius: 20px; /* Maakt het een pil */
-    border: 1px solid #e0e0e0;
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-}
-
-/* Hover effect (als nog niet geselecteerd) */
-.checkbox-pill:hover input:not(:checked) ~ .pill-content {
-    background-color: #e9e9e9;
-    border-color: #d0d0d0;
-}
-
-/* --- DE MAGIE: Als de checkbox AAN staat --- */
-.checkbox-pill input:checked ~ .pill-content {
-    background-color: var(--primary); /* Jouw merk kleur! */
-    color: white;
-    border-color: var(--primary);
-    box-shadow: 0 2px 5px rgba(209, 123, 88, 0.3); /* Subtiele gloed */
-}
-
-/* Optioneel: Een klein vinkje toevoegen voor extra duidelijkheid */
-.checkbox-pill input:checked ~ .pill-content::before {
-    content: "\f00c"; /* Font Awesome vinkje unicode */
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    margin-right: 6px;
-    font-size: 0.8rem;
-}
-
-/* --- FILTER BAR (Boven tabellen) --- */
+/* Filter Bar (Zoekbalken Container) */
 .filter-bar {
     display: flex;
     gap: 10px;
@@ -398,208 +118,242 @@ tr:hover {
     align-items: center;
 }
 
-.filter-input {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    min-width: 200px;
+/* --- 4. DATA TABLES --- */
+.table-container {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+thead {
+    background-color: rgba(255, 244, 225, 0.5);
+    border-bottom: 2px solid var(--border-color);
+}
+th {
+    padding: 1rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--secondary);
+    font-weight: bold;
+}
+td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+tr:last-child td {
+    border-bottom: none;
+}
+tr:hover {
+    background-color: rgba(255, 244, 225, 0.3);
 }
 
-.filter-select {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background-color: white;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-/* --- CALENDAR STYLING --- */
+/* --- 5. FULLCALENDAR FIXES --- */
 .calendar-wrapper {
     background: white;
     padding: 20px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
-    height: 80vh; /* Zorg dat hij de ruimte pakt */
+    height: 75vh;
 }
 
-/* FullCalendar Overrides */
+/* FIX: Spatie tussen de knoppen in de header */
+.fc .fc-button-group > .fc-button {
+    margin-left: 5px; /* Ruimte tussen knoppen */
+    border-radius: var(--radius-md) !important;
+    border: none !important;
+}
+.fc .fc-button-group > .fc-button:first-child {
+    margin-left: 0;
+}
+
+/* Kleuren */
+.fc-button-primary {
+    background-color: var(--primary) !important;
+}
+.fc-button-active {
+    background-color: var(--primary-hover) !important;
+}
 .fc-toolbar-title {
     font-family: var(--font-heading) !important;
     color: var(--primary);
 }
 
-.fc-button-primary {
-    background-color: var(--primary) !important;
-    border-color: var(--primary) !important;
-    text-transform: capitalize;
+/* --- 6. MODALS --- */
+.modal-card-lg {
+    max-width: 900px;
+    height: 85vh;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.modal-header-custom {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-body-scroll {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
 }
 
-.fc-button-primary:hover {
-    background-color: var(--primary-hover) !important;
+/* Tabs in Modal */
+.tabs-header {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 1.5rem;
+    background: #fafafa;
 }
-
-.fc-event {
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 1rem;
     cursor: pointer;
-    border: none !important;
-    padding: 2px 4px;
-    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: bold;
+    border-bottom: 3px solid transparent;
+}
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
 }
 
-/* Status kleuren in agenda */
-.fc-event.status-scheduled {
-    background-color: #e67e22;
-    border-left: 4px solid #d35400 !important;
-}
-.fc-event.status-confirmed {
-    background-color: var(--primary);
-    border-left: 4px solid #a0502f !important;
-}
-.fc-event.status-completed {
-    background-color: var(--secondary);
-    border-left: 4px solid #5d6b4f !important;
-}
-.fc-event.status-cancelled {
-    background-color: #e74c3c;
-    opacity: 0.6;
-}
+/* --- 7. DASHBOARD WIDGETS --- */
 
-/* Huidige tijd lijn */
-.fc-timegrid-now-indicator-line {
-    border-color: var(--primary);
-}
-.fc-timegrid-now-indicator-arrow {
-    border-color: var(--primary);
-}
-/* --- DASHBOARD WIDGETS --- */
+/* De bovenste rij met 3 kaartjes (Stats) */
 .dashboard-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    /* FORCEER 3 GELIJKE KOLOMMEN */
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6); /* Consistente tussenruimte */
+    margin-bottom: var(--space-8); /* Ruimte onder de stats */
 }
 
 .stat-card {
     background: white;
-    padding: 1.5rem;
+    padding: var(--space-6);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
+    text-align: center;
+    /* Zorg dat de kaartjes even hoog zijn */
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .stat-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary);
     font-family: var(--font-heading);
-    line-height: 1.2;
+    font-size: 2.5rem;
+    color: var(--primary);
+    font-weight: bold;
+    margin-bottom: 4px;
 }
 
 .stat-label {
-    color: var(--text-muted);
-    font-size: 0.85rem;
     text-transform: uppercase;
+    font-size: 0.75rem;
     letter-spacing: 1px;
-    margin-top: 5px;
+    color: var(--text-muted);
 }
 
-/* Dashboard Split Layout */
+/* De onderste rij (Agenda links + Lijstjes rechts) */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Links breed, rechts smal */
-    gap: 1.5rem;
+    /* KIES HIER JE VERDELING: */
+    /* Optie A: Gelijke kolommen (50% / 50%) */
+    /* grid-template-columns: 1fr 1fr; */
+
+    /* Optie B: Agenda iets breder (wat meestal fijner is) - bijv 60% / 40% */
+    grid-template-columns: 3fr 2fr;
+
+    gap: var(--space-6);
+    align-items: start; /* Zorgt dat de kortste kolom niet gek wordt uitgerekt */
 }
 
-@media (max-width: 900px) {
+/* Voor mobiel: Alles onder elkaar */
+@media (max-width: 1000px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(200px, 1fr)
+        ); /* Flexibel op tablet */
+    }
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Onder elkaar op tablet/mobiel */
     }
 }
 
-/* Lijstjes styling */
-.widget-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.widget-item {
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.widget-item:last-child {
-    border-bottom: none;
-}
-
-.widget-avatar {
-    width: 40px;
-    height: 40px;
-    background: var(--brand-bg);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary);
-    font-weight: bold;
-}
-/* --- DASHBOARD ACTION BUTTONS --- */
-.dashboard-actions {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 naast elkaar */
-    gap: 12px;
-}
-
-.action-card-btn {
+/* --- CMS EDITOR (Quill Fixes) --- */
+.cms-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: var(--space-6);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: white;
+}
+
+/* De Toolbar (Bovenkant) */
+.ql-toolbar.ql-snow {
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 15px 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--text-main);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
+    border-bottom: none; /* Voorkom dubbele lijn */
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background-color: #fafafa;
+    padding: 8px;
+    font-family: var(--font-body);
 }
 
-.action-card-btn i {
-    font-size: 1.5rem;
-    margin-bottom: 8px;
-    color: var(--primary); /* Brand kleur icoon */
+/* De Editor Area (Onderkant) */
+.ql-container.ql-snow {
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    min-height: 350px; /* Iets hoger voor comfort */
+    background-color: white;
 }
 
-.action-card-btn:hover {
-    border-color: var(--primary);
-    background: var(--brand-bg); /* Lichte achtergrond bij hover */
-    color: var(--primary);
-    transform: translateY(-2px); /* Klein hupje */
+/* Interne Editor Padding */
+.ql-editor {
+    padding: 20px;
+    min-height: 350px;
 }
 
-/* Specifiek voor de 'Snel Actie' kaart bovenaan */
-.quick-add-btn {
-    width: 100%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background 0.2s;
+/* Knoppen in de toolbar mooi maken */
+.ql-snow .ql-stroke {
+    stroke: var(--text-muted);
 }
-.quick-add-btn:hover {
-    background: var(--primary-hover);
+.ql-snow .ql-fill {
+    fill: var(--text-muted);
+}
+.ql-snow .ql-picker {
+    color: var(--text-muted);
+}
+
+/* Hover effect op toolbar knopjes */
+.ql-snow.ql-toolbar button:hover .ql-stroke,
+.ql-snow.ql-toolbar button.ql-active .ql-stroke {
+    stroke: var(--primary);
+}
+.ql-snow.ql-toolbar button:hover .ql-fill,
+.ql-snow.ql-toolbar button.ql-active .ql-fill {
+    fill: var(--primary);
 }

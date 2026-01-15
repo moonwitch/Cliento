@@ -7,7 +7,6 @@
 :root {
     /* -----------------------------------------------------------------
      1. LYN & SKIN BRAND PALETTE
-     (Gebaseerd op je Brandkit PDF)
      ----------------------------------------------------------------- */
 
     /* CORE COLORS */
@@ -21,8 +20,7 @@
     --brand-error: #c55546; /* Destructive */
 
     /* -----------------------------------------------------------------
-     2. MAPPING VOOR ADMIN & DASHBOARD (Functioneel)
-     We vertalen de brandkleuren naar logische namen voor je code.
+     2. MAPPING VOOR ADMIN & DASHBOARD
      ----------------------------------------------------------------- */
 
     /* Backgrounds */
@@ -54,7 +52,6 @@
     /* -----------------------------------------------------------------
      3. TYPOGRAPHY
      ----------------------------------------------------------------- */
-
     /* Font Families */
     --font-heading: "Playfair Display", serif; /* Chique, vrouwelijk */
     --font-body: "Lato", sans-serif; /* Clean, leesbaar */
@@ -77,7 +74,6 @@
     /* -----------------------------------------------------------------
      4. SPACING & LAYOUT
      ----------------------------------------------------------------- */
-
     /* Spacing Scale (4px grid) */
     --space-1: 0.25rem; /* 4px */
     --space-2: 0.5rem; /* 8px */
@@ -90,7 +86,6 @@
     /* -----------------------------------------------------------------
      5. UI COMPONENTS (Radius & Shadows)
      ----------------------------------------------------------------- */
-
     /* Radius: Soft & Organic */
     --radius-sm: 4px;
     --radius-md: 8px; /* Standaard voor inputs/cards */

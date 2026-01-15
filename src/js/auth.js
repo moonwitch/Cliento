@@ -30,7 +30,7 @@ export async function handleLogin(email, password) {
 
   // 3. Opslaan en doorsturen
   localStorage.setItem("user_role", role);
-  // console.log("Ingelogd als:", role);
+  console.log("Ingelogd als:", role);
 
   if (["admin", "superadmin", "employee"].includes(role)) {
     window.location.href = "/admin/dashboard.html";

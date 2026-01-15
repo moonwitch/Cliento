@@ -36,11 +36,11 @@ export async function TreatmentsPage() {
     <div class="filter-bar">
         <div style="position:relative;">
             <i class="fas fa-search" style="position:absolute; left: 10px; top: 10px; color:#ccc;"></i>
-            <input type="text" id="search-input" class="filter-input" placeholder="Zoek behandeling..."
+            <input type="text" id="search-input" class="search-input" placeholder="Zoek behandeling..."
                    onkeyup="filterTreatments()" style="padding-left: 35px;">
         </div>
 
-        <select id="category-filter" class="filter-select" onchange="filterTreatments()">
+        <select id="category-filter" class="form-input" onchange="filterTreatments()">
             <option value="all">Alle Categorieën</option>
             ${categories.map((c) => `<option value="${c}">${c}</option>`).join("")}
         </select>
@@ -136,57 +136,57 @@ window.openTreatmentModal = (
   description = description.replace(/'/g, "&apos;");
 
   slot.innerHTML = `
-        <div class="modal-overlay" onclick="closeAdminModal(event)">
-            <div class="modal-card" onclick="event.stopPropagation()">
-                <div style="display:flex; justify-content:space-between; margin-bottom: 1.5rem;">
-                    <h3 class="modal-title">${isEdit ? "Behandeling Bewerken" : "Nieuwe Behandeling"}</h3>
-                    <button onclick="closeAdminModal()" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+    <div class="modal-overlay" onclick="closeAdminModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 1.5rem;">
+                <h3 class="modal-title">${isEdit ? "Behandeling Bewerken" : "Nieuwe Behandeling"}</h3>
+                <button onclick="closeAdminModal()" style="border:none; background:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+            </div>
+
+            <form onsubmit="saveTreatment(event, '${id}')">
+
+                <div class="form-group">
+                    <label class="form-label">Naam Behandeling</label>
+                    <input type="text" name="title" class="form-input" required value='${title}'>
                 </div>
 
-                <form onsubmit="saveTreatment(event, '${id}')">
-
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div class="form-group">
-                        <label class="form-label">Naam Behandeling</label>
-                        <input type="text" name="title" class="form-input" required value='${title}'>
+                        <label class="form-label">Categorie</label>
+                        <select name="category" class="form-input" style="background:var(--brand-bg);">
+                            <option value="Gezicht" ${category === "Gezicht" ? "selected" : ""}>Gezicht</option>
+                            <option value="Lichaam" ${category === "Lichaam" ? "selected" : ""}>Lichaam</option>
+                            <option value="Pedicure" ${category === "Pedicure" ? "selected" : ""}>Pedicure</option>
+                            <option value="Massage" ${category === "Massage" ? "selected" : ""}>Massage</option>
+                            <option value="Ontharing" ${category === "Ontharing" ? "selected" : ""}>Ontharing</option>
+                        </select>
                     </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div class="form-group">
-                            <label class="form-label">Categorie</label>
-                            <select name="category" class="form-input" style="background:var(--brand-bg);">
-                                <option value="Gezicht" ${category === "Gezicht" ? "selected" : ""}>Gezicht</option>
-                                <option value="Lichaam" ${category === "Lichaam" ? "selected" : ""}>Lichaam</option>
-                                <option value="Pedicure" ${category === "Pedicure" ? "selected" : ""}>Pedicure</option>
-                                <option value="Massage" ${category === "Massage" ? "selected" : ""}>Massage</option>
-                                <option value="Ontharing" ${category === "Ontharing" ? "selected" : ""}>Ontharing</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Duur (minuten)</label>
-                            <input type="number" name="duration" class="form-input" required value="${duration}">
-                        </div>
-                    </div>
-
                     <div class="form-group">
-                        <label class="form-label">Prijs (€)</label>
-                        <input type="number" name="price" step="0.01" class="form-input" required value="${price}">
+                        <label class="form-label">Duur (minuten)</label>
+                        <input type="number" name="duration" class="form-input" required value="${duration}">
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Omschrijving (Optioneel)</label>
-                        <textarea name="description" class="form-input" rows="3">${description}</textarea>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Prijs (€)</label>
+                    <input type="number" name="price" step="0.01" class="form-input" required value="${price}">
+                </div>
 
-                    <div class="modal-actions">
-                        <button type="button" class="btn-icon" onclick="closeAdminModal()">Annuleren</button>
-                        <button type="submit" class="btn-primary">
-                            ${isEdit ? "Opslaan" : "Toevoegen"}
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="form-group">
+                    <label class="form-label">Omschrijving (Optioneel)</label>
+                    <textarea name="description" class="form-input" rows="3">${description}</textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-icon" onclick="closeAdminModal()">Annuleren</button>
+                    <button type="submit" class="btn-primary">
+                        ${isEdit ? "Opslaan" : "Toevoegen"}
+                    </button>
+                </div>
+            </form>
         </div>
-    `;
+    </div>
+`;
 };
 
 window.saveTreatment = async (e, id) => {

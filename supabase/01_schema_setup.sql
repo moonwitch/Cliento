@@ -35,10 +35,7 @@ CREATE TABLE public.clients (
 
   first_name text NOT NULL,
   last_name text NOT NULL,
-
-  -- Email moet uniek zijn én geldig formaat
   email text UNIQUE CHECK (email ~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'::text),
-
   phone text,
   birthday date,
   allergies text,

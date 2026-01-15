@@ -22,17 +22,17 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger functie: handle_new_user()
 -- Maakt automatisch een Profile aan zodra een User zich registreert.
-create or replace function public.handle_new_user () RETURNS trigger as $$
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
 DECLARE
     first_name TEXT;
     last_name TEXT;
-    full_name TEXT;
     role public.user_role;
 BEGIN
   -- Data voorbereiden
   first_name := COALESCE(new.raw_user_meta_data->>'first_name', '');
   last_name := COALESCE(new.raw_user_meta_data->>'last_name', '');
-  role := (new.raw_user_meta_data->>'role')::public.user_role; -- typecasting needed
+  role := COALESCE(((new.raw_user_meta_data->>'role')::public.user_role), "client"); -- typecasting needed
 
   -- Profiel aanmaken
   INSERT INTO public.profiles (id, first_name, last_name, role, email, is_active)

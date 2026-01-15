@@ -35,11 +35,11 @@ export async function StaffPage() {
     <div class="filter-bar">
         <div style="position:relative;">
             <i class="fas fa-search" style="position:absolute; left: 10px; top: 10px; color:#ccc;"></i>
-            <input type="text" id="search-staff" class="filter-input" placeholder="Zoek naam of email..."
+            <input type="text" id="search-staff" class="search-input" placeholder="Zoek naam of email..."
                    onkeyup="filterStaff()" style="padding-left: 35px;">
         </div>
 
-        <select id="role-filter" class="filter-select" onchange="filterStaff()">
+        <select id="role-filter" class="form-input" onchange="filterStaff()">
             <option value="all">Alle Rollen</option>
             <option value="admin">Admin</option>
             <option value="employee">Employee</option>
@@ -97,8 +97,7 @@ window.filterStaff = () => {
 
   rows.forEach((row) => {
     const text = row.innerText.toLowerCase();
-    const rowRole = row.dataset.role; // Haalt rol op uit data-role="..."
-
+    const rowRole = row.dataset.role;
     const matchSearch = text.includes(search);
     const matchRole = role === "all" || rowRole === role;
 
@@ -114,7 +113,6 @@ window.filterStaff = () => {
 };
 
 // --- MODALS & LOGICA ---
-
 window.closeAdminModal = (e) => {
   if (e && !e.target.classList.contains("modal-overlay")) return;
   const slot = document.getElementById("admin-modal-slot");
@@ -158,7 +156,6 @@ window.handleInvite = async (e) => {
   const orgText = btn.innerHTML;
   btn.innerHTML = "Bezig...";
 
-  // Data uit formulier
   const formData = new FormData(e.target);
   const body = Object.fromEntries(formData.entries());
 
@@ -180,13 +177,12 @@ window.handleInvite = async (e) => {
   }
 };
 
-// --- EDIT MODAL ---
+// --- EDIT MODAL (Met Select All) ---
 window.openEditModal = async (id, role, firstName, lastName, email) => {
   const slot = document.getElementById("admin-modal-slot");
   if (!slot) return;
 
-  // 1. Haal Treatments op & Bestaande koppelingen voor deze user
-  // We doen dit parallel voor snelheid
+  // 1. Data ophalen
   const [allTreatmentsReq, myTreatmentsReq] = await Promise.all([
     window.supabaseClient
       .from("treatments")
@@ -199,12 +195,11 @@ window.openEditModal = async (id, role, firstName, lastName, email) => {
   ]);
 
   const allTreatments = allTreatmentsReq.data || [];
-  // Maak een simpele array van ID's die de user al heeft (bv: ['uuid-1', 'uuid-2'])
   const myTreatmentIds = (myTreatmentsReq.data || []).map(
     (row) => row.treatment_id,
   );
 
-  // 2. Groepeer treatments per categorie (voor nette weergave)
+  // 2. Groeperen
   const grouped = {};
   allTreatments.forEach((t) => {
     const cat = t.category || "Overig";
@@ -212,24 +207,35 @@ window.openEditModal = async (id, role, firstName, lastName, email) => {
     grouped[cat].push(t);
   });
 
-  // 3. Bouw de HTML voor de checklist
+  // 3. Bouw HTML met "Select All" knopjes
   let treatmentHTML = "";
   for (const [category, items] of Object.entries(grouped)) {
-    treatmentHTML += `<div class="treatment-category">${category}</div><div class="treatment-grid">`;
+    // Veilige ID voor de categorie container
+    const safeCatId = category.replace(/[^a-zA-Z0-9]/g, "_");
+
+    treatmentHTML += `
+            <div class="treatment-category" style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem;">
+                <span>${category}</span>
+                <button type="button" onclick="toggleCategory('${safeCatId}')"
+                        style="background:none; border:none; color:var(--primary); font-size:0.75rem; cursor:pointer; text-decoration:underline;">
+                    Alles selecteren
+                </button>
+            </div>
+            <div class="treatment-grid" id="cat-group-${safeCatId}">`;
+
     items.forEach((t) => {
       const isChecked = myTreatmentIds.includes(t.id) ? "checked" : "";
-      // HIER ZIT DE WIJZIGING: Nieuwe structuur met 'checkbox-pill' en 'pill-content'
       treatmentHTML += `
-                  <label class="checkbox-pill">
-                      <input type="checkbox" name="treatments" value="${t.id}" ${isChecked}>
-                      <span class="pill-content">${t.title}</span>
-                  </label>
-              `;
+                <label class="checkbox-pill">
+                    <input type="checkbox" name="treatments" value="${t.id}" ${isChecked}>
+                    <span class="pill-content">${t.title}</span>
+                </label>
+            `;
     });
     treatmentHTML += `</div>`;
   }
 
-  // 4. Render de volledige modal
+  // 4. Render
   slot.innerHTML = `
         <div class="modal-overlay" onclick="closeAdminModal(event)">
             <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
@@ -255,8 +261,7 @@ window.openEditModal = async (id, role, firstName, lastName, email) => {
 
                     <div class="treatment-section">
                         <h4 style="margin: 0 0 10px 0; font-size: 0.9rem;">Gekoppelde Behandelingen</h4>
-                        <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">Vink aan wat <strong>${firstName}</strong> mag uitvoeren.</p>
-                        ${allTreatments.length > 0 ? treatmentHTML : "<p>Geen behandelingen gevonden in database.</p>"}
+                        ${allTreatments.length > 0 ? treatmentHTML : "<p>Geen behandelingen gevonden.</p>"}
                     </div>
 
                     <div class="modal-actions" style="justify-content: space-between; margin-top: 20px;">
@@ -272,39 +277,53 @@ window.openEditModal = async (id, role, firstName, lastName, email) => {
     `;
 };
 
+// --- NIEUWE SELECT ALL FUNCTIE ---
+window.toggleCategory = (catId) => {
+  const container = document.getElementById(`cat-group-${catId}`);
+  if (!container) return;
+
+  const inputs = container.querySelectorAll('input[type="checkbox"]');
+  if (inputs.length === 0) return;
+
+  // Check of ze ALLEMAAL aan staan. Zo ja -> alles uit. Anders -> alles aan.
+  const allChecked = Array.from(inputs).every((input) => input.checked);
+
+  inputs.forEach((input) => {
+    input.checked = !allChecked;
+  });
+};
+
 window.saveUser = async (e, id) => {
   e.preventDefault();
   const btn = e.target.querySelector('button[type="submit"]');
   const orgText = btn.innerText;
   btn.innerText = "Opslaan...";
 
-  // 1. Profiel Data
+  // Data verzamelen
   const newRole = document.getElementById("edit-role").value;
   const newFirst = document.getElementById("edit-firstname").value;
   const newLast = document.getElementById("edit-lastname").value;
 
-  // 2. Treatments Data (Verzamel alle aangevinkte checkboxen)
   const checkboxes = document.querySelectorAll(
     'input[name="treatments"]:checked',
   );
   const selectedTreatmentIds = Array.from(checkboxes).map((cb) => cb.value);
 
   try {
-    // STAP A: Update Profiel
+    // 1. Update Profiel
     const { error: profileError } = await window.supabaseClient
       .from("profiles")
       .update({
         role: newRole,
         first_name: newFirst,
         last_name: newLast,
-        full_name: `${newFirst} ${newLast}`,
       })
       .eq("id", id);
 
     if (profileError) throw profileError;
 
-    // STAP B: Update Koppelingen (Sync methode: Alles weg -> Nieuwe erin)
-    // 1. Verwijder eerst ALLE bestaande koppelingen voor deze user
+    // 2. Update Skills (Delete All -> Insert New)
+    // A. Verwijder oude
     const { error: deleteError } = await window.supabaseClient
       .from("staff_treatments")
       .delete()
@@ -312,7 +331,7 @@ window.saveUser = async (e, id) => {
 
     if (deleteError) throw deleteError;
 
-    // 2. Voeg de geselecteerde opnieuw toe (als er zijn)
+    // B. Voeg nieuwe toe
     if (selectedTreatmentIds.length > 0) {
       const newLinks = selectedTreatmentIds.map((tid) => ({
         staff_id: id,
@@ -327,7 +346,7 @@ window.saveUser = async (e, id) => {
     }
 
     window.closeAdminModal();
-    handleNavigation("staff"); // Refresh tabel
+    handleNavigation("staff"); // Ververs de lijst
   } catch (err) {
     alert("Fout bij opslaan: " + err.message);
     console.error(err);
@@ -347,20 +366,4 @@ window.deleteUser = async (id) => {
     window.closeAdminModal();
     handleNavigation("staff");
   }
-};
-
-window.filterStaff = () => {
-  const search = document.getElementById("search-staff").value.toLowerCase();
-  const role = document.getElementById("role-filter").value;
-  const rows = document.querySelectorAll(".staff-row");
-
-  rows.forEach((row) => {
-    const text = row.innerText.toLowerCase();
-    const rowRole = row.dataset.role;
-
-    const matchSearch = text.includes(search);
-    const matchRole = role === "all" || rowRole === role;
-
-    row.style.display = matchSearch && matchRole ? "" : "none";
-  });
 };

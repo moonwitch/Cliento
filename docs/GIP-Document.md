@@ -116,6 +116,7 @@ Lyn & Skin onderscheidt zich van de concurrentie door de begeleiding en educatie
 * **Als klant** wil ik mijn afspraak kunnen annuleren of wijzigen via een link in mijn bevestigingsmail, zodat ik niet hoef te bellen.
 
 ##### Epic 2: Klantenbeheer (Account Systeem)
+
 * **Als gebruiker** wil ik duidelijke registratie- en inlogformulieren kunnen gebruiken, zodat ik een account kan aanmaken of kan inloggen.
 * **Als geregistreerde klant** wil ik een "Mijn Account" pagina zien met een overzicht van mijn vorige en toekomstige afspraken.
 
@@ -416,9 +417,10 @@ Het kleurensysteem is opgebouwd rond een warm, natuurlijk palet dat rust, zorg e
 
 Ik heb een vrij basis EER diagram opgesteld; op basis van feedback van Harlyne. Zij vindt het belangrijk om degelijke klantenprofielen te hebben - en ging nog eens denken of ze extra features wou. Deze EER is een reflectie van de basis ze wou. 
 
-![CleanShot 2025-12-04 at 21.07.43](./assets/CleanShot%202025-12-04%20at%2021.07.43.png)
+![supabase-schema-oprjavcfnfnyvqoxwnyv](./assets/supabase-schema-oprjavcfnfnyvqoxwnyv.png)
 
 # SEO Strategie
+
 Om de doelstelling van 100 boekingen per maand te behalen, is vindbaarheid essentieel. Voor Lyn & Skin focust de SEO-strategie zich op drie pijlers: Technische SEO (de basis), On-Page SEO (de inhoud) en Lokale SEO (de regio).
 
 ## Technische SEO
