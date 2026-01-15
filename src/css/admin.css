@@ -351,3 +351,58 @@ tr:hover {
 .ql-snow.ql-toolbar button.ql-active .ql-fill {
     fill: var(--primary);
 }
+
+.treatment-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; /* Ruimte tussen de pilletjes */
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+/* Verberg de standaard checkbox */
+.checkbox-pill input[type="checkbox"] {
+    display: none;
+}
+
+/* De "Pill" zelf */
+.checkbox-pill .pill-content {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 20px; /* Ronde hoeken */
+    color: #666;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none; /* Voorkom tekst selecteren bij snel klikken */
+}
+
+/* Hover effect */
+.checkbox-pill:hover .pill-content {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* GESELECTEERDE status (Als input checked is) */
+.checkbox-pill input[type="checkbox"]:checked + .pill-content {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 2px 5px rgba(209, 123, 88, 0.3);
+}
+
+/* Categorie kopjes in de modal */
+.treatment-category {
+    font-weight: bold;
+    color: var(--brand-text);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
