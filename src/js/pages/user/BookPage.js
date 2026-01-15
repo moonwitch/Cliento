@@ -10,7 +10,7 @@ export async function BookPage(preselectedId = null) {
   const { data: treatments } = await window.supabaseClient
     .from("treatments")
     .select("*")
-    .eq("active", true)
+    // .eq("active", true)
     .order("category");
 
   const grouped = {};
