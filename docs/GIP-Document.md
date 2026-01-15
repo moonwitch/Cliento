@@ -462,13 +462,10 @@ Omdat Lyn & Skin een fysieke locatie heeft, is dit de belangrijkste driver voor 
 - Consistentie
 	- De adresgegevens op de website (in de footer en op de contactpagina) moeten exact overeenkomen met die in Google Maps.
 
-## Monitoring en Tools
-Om de resultaten te meten worden de volgende tools gekoppeld:
-
-- Google Search Console: Voor het monitoren van indexatie, zoekwoordenprestaties en technische fouten.
-
-- Lighthouse: Wordt gebruikt tijdens development om te garanderen dat de Performance, Accessibility, Best Practices en SEO scores in het groen (90-100) blijven.
-
 # Publicatie
+De site werd gepubliceerd op Vercel, met een database op Supabase en de versiecontrole hangt onder Github. 
+
+Site : https://cliento-rose.vercel.app/
+Github Repo: https://github.com/moonwitch/cliento
 
 # Product reflectie
