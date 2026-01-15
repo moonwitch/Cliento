@@ -234,7 +234,6 @@ tr:hover {
 /* De bovenste rij met 3 kaartjes (Stats) */
 .dashboard-stats {
     display: grid;
-    /* FORCEER 3 GELIJKE KOLOMMEN */
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-6); /* Consistente tussenruimte */
     margin-bottom: var(--space-8); /* Ruimte onder de stats */
@@ -277,11 +276,6 @@ tr:hover {
 /* De onderste rij (Agenda links + Lijstjes rechts) */
 .dashboard-grid {
     display: grid;
-    /* KIES HIER JE VERDELING: */
-    /* Optie A: Gelijke kolommen (50% / 50%) */
-    /* grid-template-columns: 1fr 1fr; */
-
-    /* Optie B: Agenda iets breder (wat meestal fijner is) - bijv 60% / 40% */
     grid-template-columns: 3fr 2fr;
 
     gap: var(--space-6);
