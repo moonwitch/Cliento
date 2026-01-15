@@ -406,7 +406,7 @@ main,
     inset: 0;
     background: rgba(70, 57, 47, 0.6); /* Brand dark dim */
     backdrop-filter: blur(4px);
-    display: none; /* JS toggles 'display: flex' or class 'open' */
+    /*display: none; /* JS toggles 'display: flex' or class 'open' */*/
     align-items: center;
     justify-content: center;
     z-index: 1000;

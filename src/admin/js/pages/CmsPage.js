@@ -29,7 +29,6 @@ export async function CmsPage() {
 }
 
 // --- RENDERING (Overview Cards) ---
-
 function renderContentSections(contents) {
   if (!contents || contents.length === 0)
     return "<p>Nog geen content. Maak een nieuwe pagina aan!</p>";
@@ -124,7 +123,7 @@ window.openEditSectionModal = async (sectionName) => {
 
   // 3. Render Modal
   slot.innerHTML = `
-        <div class="modal-overlay" onclick="closeAdminModal(event)">
+        <div class="modal-overlay open" onclick="closeAdminModal(event)">
             <div class="modal-card modal-card-lg" onclick="event.stopPropagation()">
                 <div class="modal-header-custom">
                     <h3 class="modal-title" style="text-transform: capitalize;">${sectionName} Bewerken</h3>
@@ -399,7 +398,7 @@ window.deletePage = async (sectionName) => {
 window.openAddPageModal = () => {
   const slot = document.getElementById("admin-modal-slot");
   slot.innerHTML = `
-        <div class="modal-overlay" onclick="closeAdminModal(event)">
+        <div class="modal-overlay open" style="display: flex;" onclick="closeAdminModal(event)">
             <div class="modal-card" onclick="event.stopPropagation()">
                 <div class="modal-header-custom">
                     <h3 class="modal-title">Nieuwe Pagina</h3>

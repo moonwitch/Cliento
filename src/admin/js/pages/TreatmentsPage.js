@@ -136,7 +136,7 @@ window.openTreatmentModal = (
   description = description.replace(/'/g, "&apos;");
 
   slot.innerHTML = `
-    <div class="modal-overlay" onclick="closeAdminModal(event)">
+    <div class="modal-overlay open" onclick="closeAdminModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
             <div style="display:flex; justify-content:space-between; margin-bottom: 1.5rem;">
                 <h3 class="modal-title">${isEdit ? "Behandeling Bewerken" : "Nieuwe Behandeling"}</h3>

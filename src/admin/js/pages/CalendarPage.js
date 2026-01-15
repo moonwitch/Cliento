@@ -183,7 +183,7 @@ window.openAppointmentModal = async (
       : toLocalISO(new Date(Date.now() + 3600000));
 
   slot.innerHTML = `
-        <div class="modal-overlay" onclick="closeAdminModal(event)">
+        <div class="modal-overlay open" onclick="closeAdminModal(event)">
             <div class="modal-card" onclick="event.stopPropagation()">
                 <div style="display:flex; justify-content:space-between; margin-bottom: 1rem;">
                     <h3 class="modal-title">${apptId ? "Afspraak Bewerken" : "Nieuwe Afspraak"}</h3>

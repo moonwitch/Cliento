@@ -121,7 +121,7 @@ window.openClientDossier = async (clientId) => {
 
   // Render Modal
   slot.innerHTML = `
-        <div class="modal-overlay" onclick="closeAdminModal(event)">
+        <div class="modal-overlay open" onclick="closeAdminModal(event)">
             <div class="modal-card modal-card-lg" onclick="event.stopPropagation()">
 
                 <div class="modal-header-custom">

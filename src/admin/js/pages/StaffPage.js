@@ -124,7 +124,7 @@ window.openInviteModal = () => {
   const slot = document.getElementById("admin-modal-slot");
   if (!slot) return;
   slot.innerHTML = `
-        <div class="modal-overlay" onclick="closeAdminModal(event)">
+        <div class="modal-overlay open" onclick="closeAdminModal(event)">
             <div class="modal-card" onclick="event.stopPropagation()">
                 <div style="display:flex; justify-content:space-between; margin-bottom: 1.5rem;">
                     <h3 class="modal-title">Nieuw Teamlid</h3>
@@ -237,7 +237,7 @@ window.openEditModal = async (id, role, firstName, lastName, email) => {
 
   // 4. Render
   slot.innerHTML = `
-        <div class="modal-overlay" onclick="closeAdminModal(event)">
+        <div class="modal-overlay open" onclick="closeAdminModal(event)">
             <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
                 <div style="display:flex; justify-content:space-between; margin-bottom: 1rem;">
                     <h3 class="modal-title">Medewerker Bewerken</h3>

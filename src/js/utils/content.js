@@ -15,7 +15,7 @@ export async function fetchContent(sectionName) {
 
     if (error) {
       console.warn(`Content error voor ${sectionName}:`, error.message);
-      return {}; // Geef ALTIJD een object terug, nooit null
+      return {};
     }
 
     const contentMap = {};
