@@ -1,51 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lyn & Skin</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="./js/config.js" defer></script>
-    <script src="./js/loader.js" defer></script>
-    <script src="./js/auth.js" defer></script>
-    <script src="./js/auth-modal.js" defer></script>
-    <script src="./js/header.js" defer></script>
-    <script src="./js/app.js" defer></script>
+
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/config.js"></script>
+
+    <script type="module" src="./js/app.js"></script>
 </head>
 
 <body>
-    <!-- Header -->
-    <div id="site-header"></div>
 
-    <!-- Modal slot -->
+    <div id="app"></div>
+
     <div id="auth-modal-slot"></div>
 
-    <!-- Simple hero / landingspagina -->
-    <section class="hero">
-        <div class="hero-inner">
-            <h1 class="hero-title">Welkom bij Lyn & Skin</h1>
-            <p class="hero-subtitle">Ontdek onze behandelingen en boek je afspraak eenvoudig online.</p>
-            <div class="hero-actions">
-                <a class="btn btn-primary" href="pages/treatments.html">Bekijk Behandelingen</a>
-                <a class="btn btn-outline" href="#" data-open-auth="login">Inloggen</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <div id="site-footer"></div>
-
-    <script>
-        // NL: Optioneel direct registreren open via ?auth=register
-        window.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('auth') === 'register' && typeof openAuthModal === 'function') {
-                openAuthModal('register');
-            }
-        });
-    </script>
 </body>
 
 </html>

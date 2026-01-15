@@ -1,0 +1,134 @@
+/* src/css/admin.css */
+
+/* --- 1. DE BASIS LAYOUT --- */
+.admin-container {
+    display: flex;
+    height: 100vh;
+    background-color: var(--brand-bg);
+    padding: var(--space-4);
+    gap: var(--space-8);
+    box-sizing: border-box;
+}
+
+/* --- 2. DE SIDEBAR (Zwevend & Elegant) --- */
+.sidebar {
+    width: 280px;
+    background-color: var(--bg-sidebar); /* Dark Brown */
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-8) var(--space-4);
+    box-shadow: var(--shadow-lg);
+    color: var(--text-light);
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: var(--space-12);
+}
+
+.sidebar-header h2 {
+    font-family: var(--font-heading);
+    color: var(--primary);
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+/* Navigatie Lijst */
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.nav-item {
+    margin-bottom: var(--space-2);
+    position: relative;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    color: var(--text-light);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+    font-weight: var(--weight-light);
+    cursor: pointer;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(255, 244, 225, 0.1);
+    color: var(--primary);
+}
+
+/* Dropdown / Submenu Styling */
+.submenu {
+    list-style: none;
+    padding-left: var(--space-8);
+    margin-top: var(--space-1);
+    display: none; /* Verborgen tot actief */
+}
+
+.nav-item.open .submenu {
+    display: block;
+}
+
+.submenu-link {
+    display: block;
+    padding: 10px 15px;
+    color: var(--text-light);
+    opacity: 0.7;
+    text-decoration: none;
+    font-size: var(--text-sm);
+    transition: 0.2s;
+}
+
+.submenu-link:hover {
+    opacity: 1;
+    color: var(--primary);
+}
+
+/* --- 3. MAIN CONTENT (Perfect Centered Canvas) --- */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontaal centeren */
+    overflow-y: auto;
+}
+
+/* De container die de modules vasthoudt */
+#app-container {
+    width: 100%;
+    max-width: 1000px; /* Houdt de content behapbaar */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+/* Top Bar binnen de centered content */
+.top-bar {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+}
+
+/* --- 4. CARDS & ELEMENTS --- */
+.card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: var(--space-10);
+    box-shadow: 0 15px 35px rgba(70, 57, 47, 0.05);
+    border: 1px solid rgba(233, 211, 186, 0.3);
+    width: 100%;
+    box-sizing: border-box;
+}

@@ -1,89 +1,71 @@
 // src/js/auth.js
 
-// 1. INLOGGEN
-async function handleLogin() {
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
-  const statusMsg = document.getElementById("status-msg");
+export async function handleLogin(email, password) {
+  if (!window.supabaseClient) throw new Error("Supabase niet geladen");
 
-  try {
-    const {
-      data: { user },
-      error,
-    } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password,
-    });
+  console.log("Poging tot inloggen met:", email);
 
-    if (error) throw error;
+  // 1. Inloggen bij Supabase
+  const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    console.log("Inloggen auth gelukt, nu rol ophalen...");
+  if (error) {
+    console.error("Supabase auth error:", error);
+    throw error;
+  }
 
-    const { data: role, error: roleError } =
-      await supabaseClient.rpc("get_my_role");
-    if (roleError) throw roleError;
+  console.log("Auth succesvol, rol ophalen...");
 
-    console.log("Gebruiker is ingelogd als:", role);
+  // 2. Rol ophalen
+  const { data: role, error: roleError } =
+    await window.supabaseClient.rpc("get_my_role");
 
-    if (["admin", "superadmin", "employee"].includes(role)) {
-      window.location.href = "/admin/dashboard.html";
-    } else {
-      window.location.href = "/user-dashboard.html";
-    }
-  } catch (error) {
-    console.error("Er ging iets mis:", error.message);
-    alert("Inloggen mislukt: " + error.message);
+  // Fallback: Als RPC faalt, kunnen we soms doorgaan, maar voor nu error gooien
+  if (roleError) {
+    console.error("Rol error:", roleError);
+    throw new Error("Kon gebruikersrol niet ophalen.");
+  }
+
+  // 3. Opslaan en doorsturen
+  localStorage.setItem("user_role", role);
+  // console.log("Ingelogd als:", role);
+
+  if (["admin", "superadmin", "employee"].includes(role)) {
+    window.location.href = "/admin/dashboard.html";
+  } else {
+    // Gewone gebruiker: herlaad pagina (zodat header update)
+    window.location.reload();
   }
 }
 
-async function handleSignup() {
-  // Haal de nieuwe velden op
-  const firstName = document.getElementById("reg-firstname").value;
-  const lastName = document.getElementById("reg-lastname").value;
-  const email = document.getElementById("reg-email").value;
-  const password = document.getElementById("reg-password").value;
-  const statusMsg = document.getElementById("status-msg");
+export async function handleRegister(formData) {
+  if (!window.supabaseClient) throw new Error("Supabase niet geladen");
 
-  if (!email || !password || !firstName || !lastName) {
-    statusMsg.innerText = "Vul aub alle velden in (ook je naam).";
-    statusMsg.style.color = "red";
-    return;
-  }
+  const { email, password, firstname, lastname } = formData;
 
-  statusMsg.innerText = "Registreren...";
-
-  const { data, error } = await supabaseClient.auth.signUp({
+  const { data, error } = await window.supabaseClient.auth.signUp({
     email: email,
     password: password,
     options: {
       data: {
-        first_name: firstName,
-        last_name: lastName,
-        full_name: `${firstName} ${lastName}`,
+        first_name: firstname,
+        last_name: lastname,
+        full_name: `${firstname} ${lastname}`,
         role: "client",
-        phone: document.getElementById("reg-phone").value,
-        birthday: document.getElementById("reg-bday").value,
       },
     },
   });
 
-  if (error) {
-    statusMsg.innerText = "Fout: " + error.message;
-    statusMsg.style.color = "red";
-  } else {
-    statusMsg.innerText = "Gelukt! Je kan nu inloggen.";
-    statusMsg.style.color = "green";
-    setTimeout(() => {
-      // NL: Wissel naar login in het modal (en prefills email)
-      if (typeof toggleAuthMode === "function") toggleAuthMode();
-      const loginEmail = document.getElementById("login-email");
-      if (loginEmail) loginEmail.value = email;
-    }, 1200);
-  }
+  if (error) throw error;
+  return data;
 }
 
-// 3. UITLOGGEN
-async function handleLogout() {
-  await supabaseClient.auth.signOut();
-  window.location.href = "index.html";
+export async function handleLogout() {
+  if (window.supabaseClient) {
+    await window.supabaseClient.auth.signOut();
+  }
+  localStorage.removeItem("user_role");
+  window.location.href = "/";
 }

@@ -55,7 +55,7 @@ function initHeader() {
     }
   });
 
-  // Trigger gedrag: bij niet ingelogd => modal openen; bij ingelogd => dropdown togglen
+  // \Trigger gedrag: bij niet ingelogd => modal openen; bij ingelogd => dropdown togglen
   accountTrigger?.addEventListener("click", (e) => {
     if (!isAuthenticated) {
       e.preventDefault();
@@ -66,7 +66,7 @@ function initHeader() {
     toggleMenu();
   });
 
-  // Logout
+  // NL: Logout
   logoutBtn?.addEventListener("click", () => {
     if (typeof handleLogout === "function") {
       handleLogout();
@@ -77,7 +77,7 @@ function initHeader() {
     }
   });
 
-  // Supabase aanwezig?
+  // NL: Supabase aanwezig?
   if (!window.supabaseClient) {
     console.warn(
       "Supabase client niet gevonden. Laad config.js vóór header.js",
@@ -85,7 +85,7 @@ function initHeader() {
     return;
   }
 
-  // Auth toepassen
+  // NL: Auth toepassen
   function applyUI(auth) {
     isAuthenticated = !!auth;
     // Verberg admin link standaard
@@ -94,7 +94,7 @@ function initHeader() {
     setMenuOpen(false);
   }
 
-  // Initiele sessie + rol
+  // NL: Initiele sessie + rol
   supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
     applyUI(!!session);
 
@@ -114,7 +114,7 @@ function initHeader() {
     }
   });
 
-  // Luister naar wijzigingen
+  // NL: Luister naar wijzigingen
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     applyUI(!!session);
   });

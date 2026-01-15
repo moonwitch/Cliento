@@ -1,103 +1,56 @@
--- Dummy data
-insert into
-  public.clients (first_name, last_name, email, phone_number, notes)
-values
+-- ================================================================
+-- BESTAND: 05_seed_data.sql
+-- BESCHRIJVING: Testdata (Fake Staff, Fake Appointments)
+-- ================================================================
+
+-- FAKE MEDEWERKER & KLANTEN
+-- We voegen eerst een fake user toe aan auth.users
+-- Wachtwoord is 'password' (versleuteld)
+INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
+VALUES
+  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'sofie@lynskin.be', '$2a$10$6gPtvpqCAiwavx1EOnjIgOykKMgzRdiBuejUQGIRRjvUi/ZgMh.9C', now(), '{"first_name": "Sofie", "last_name": "Peeters", "role": "employee"}'),
+  ('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380b22', 'mark@lynskin.be', '$2a$10$6gPtvpqCAiwavx1EOnjIgOykKMgzRdiBuejUQGIRRjvUi/ZgMh.9C', now(), '{"first_name": "Mark", "last_name": "Admin", "role": "admin"}')
+ON CONFLICT (id) DO NOTHING;
+
+-- Voeg extra klanten toe (CRM)
+INSERT INTO public.clients (first_name, last_name, email, phone, notes)
+VALUES
+  ('Lisa', 'Willems', 'lisa@example.com', '0471234567', 'Gevoelige huid, allergisch aan noten.'),
+  ('Tom', 'Janssens', 'tom@example.com', '0479988776', 'Komt voor rugklachten.'),
+  ('Emma', 'De Smet', 'emma@example.com', '0475556666', 'Nieuwe klant via Instagram.');
+
+-- 3. KOPPEL SKILLS (Wie kan wat?)
+-- We koppelen Sofie (employee) aan alle gezichtsbehandelingen
+INSERT INTO public.staff_treatments (staff_id, treatment_id)
+SELECT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', id
+FROM public.treatments
+WHERE category = 'Gezicht';
+
+-- We koppelen Mark (admin) aan Lichaam
+INSERT INTO public.staff_treatments (staff_id, treatment_id)
+SELECT 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380b22', id
+FROM public.treatments
+WHERE category = 'Lichaam';
+
+-- FAKE AFSPRAKEN (Agenda vullen)
+-- We plannen wat afspraken in voor de komende dagen
+INSERT INTO public.appointments (staff_id, client_id, treatment_id, start_time, end_time, status, notes)
+VALUES
   (
-    'Sophie',
-    'De Vries',
-    'sophie.test@example.com',
-    '0471234567',
-    'Allergisch voor notenolie'
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', -- Sofie
+    (SELECT id FROM public.clients WHERE first_name = 'Lisa' LIMIT 1),
+    (SELECT id FROM public.treatments WHERE title = 'Gelaat Basis' LIMIT 1),
+    NOW() + INTERVAL '1 day 10 hours', -- Morgen om 10u (ongeveer)
+    NOW() + INTERVAL '1 day 10 hours 45 minutes',
+    'confirmed',
+    'Eerste afspraak'
   ),
   (
-    'Mark',
-    'Peeters',
-    'mark.test@example.com',
-    '0479998877',
-    'Komt vaak te laat'
-  ),
-  (
-    'Lotte',
-    'Janssens',
-    'lotte.test@example.com',
-    '0471122334',
-    'Wil altijd de nieuwste behandeling'
-  ),
-  (
-    'Thomas',
-    'Maes',
-    'thomas.test@example.com',
-    '0475556666',
-    null
-  ),
-  (
-    'Eva',
-    'Willems',
-    'eva.test@example.com',
-    '0478889900',
-    'Gevoelige huid'
+    'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380b22', -- Mark
+    (SELECT id FROM public.clients WHERE first_name = 'Tom' LIMIT 1),
+    (SELECT id FROM public.treatments WHERE title = 'Rugmassage' LIMIT 1),
+    NOW() + INTERVAL '2 days 14 hours', -- Overmorgen om 14u
+    NOW() + INTERVAL '2 days 14 hours 30 minutes',
+    'scheduled',
+    'Heeft last van onderrug'
   );
-
--- 2. Nu maken we afspraken (gekoppeld aan jouw employee en de nieuwe klanten)
-with
-  target_worker as (
-    select
-      id
-    from
-      public.profiles
-    where
-      id = (
-        select
-          id
-        from
-          auth.users
-        where
-          email = 'kelly@kellyand.coffee'
-      )
-  )
-insert into
-  public.appointments (
-    worker_id,
-    client_id,
-    treatment_title,
-    start_time,
-    status,
-    notes
-  )
-select
-  (
-    select
-      id
-    from
-      target_worker
-  ), -- De ID van jouw employee
-  c.id, -- De ID van de klant (we pakken ze alle 5)
-  case
-    when c.first_name = 'Sophie' then 'Gelaatsverzorging Luxe'
-    when c.first_name = 'Mark' then 'Rugmassage'
-    else 'Basis Manicure'
-  end,
-  NOW() + (INTERVAL '1 day' * (RANDOM() * 10)::int) + (INTERVAL '1 hour' * (RANDOM() * 8)::int), -- Random datum in de komende 10 dagen
-  'confirmed',
-  'Gegenereerde test data'
-from
-  public.clients c
-where
-  c.email like '%@example.com';
-
--- We selecteren alleen de nieuwe testklanten
--- Test Content Blocks
-insert into
-  public.content_blocks (section_key, label, content)
-values
-  (
-    'home_welcome',
-    'Welkomsttekst Homepage',
-    'Welkom bij Lyn & Skin, jouw plek voor rust.'
-  ),
-  (
-    'about_harlyne',
-    'Over Harlyne',
-    'Ik ben Harlyne en ik ben gepassioneerd door huidverbetering.'
-  )
-on conflict (section_key) do nothing;

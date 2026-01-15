@@ -1,97 +1,186 @@
-// src/admin/js/dashboard.js
+export async function DashboardPage() {
+  if (!window.supabaseClient)
+    return `<div style="color:red">Supabase niet geladen.</div>`;
 
-// 1. De Configuratie
-const moduleConfig = new Map();
+  const todayStart = new Date().toISOString().split("T")[0];
+  const nowISO = new Date().toISOString();
 
-moduleConfig.set("dashboard", {
-  title: "Dashboard",
-  path: "./modules/overview.html",
-});
+  // 1. DATA OPHALEN
+  const [statsReq, appointmentsReq, clientsReq] = await Promise.all([
+    window.supabaseClient
+      .from("appointments")
+      .select("id", { count: "exact", head: true })
+      .gte("start_time", `${todayStart}T00:00:00`)
+      .lte("start_time", `${todayStart}T23:59:59`),
 
-moduleConfig.set("cms", {
-  title: "CMS",
-  path: "./modules/cms.html",
-  function: "initCMS",
-});
+    window.supabaseClient
+      .from("appointments")
+      .select("*, clients(first_name, last_name), treatments(title)")
+      .gte("start_time", nowISO)
+      .order("start_time", { ascending: true })
+      .limit(5),
 
-moduleConfig.set("staff", {
-  title: "Medewerkers",
-  path: "./modules/staff.html",
-  function: "initStaff",
-});
+    window.supabaseClient
+      .from("clients")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
 
-moduleConfig.set("treatments", {
-  title: "Behandelingen",
-  path: "./modules/treatments.html",
-  function: "initTreatments",
-});
+  const todayCount = statsReq.count || 0;
+  const nextAppts = appointmentsReq.data || [];
+  const newClients = clientsReq.data || [];
 
-// Agenda koppelen (gebruikt waarschijnlijk extern script of overview)
-moduleConfig.set("calendar", {
-  title: "Agenda",
-  path: "./modules/overview.html", // Of naar een calendar.html als je die hebt
-});
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? "Goedemorgen" : hour < 18 ? "Goedemiddag" : "Goedenavond";
 
-// Clients & Appointments (voorlopig naar overview sturen of placeholder)
-moduleConfig.set("clients", {
-  title: "Klanten",
-  path: "./modules/overview.html",
-});
-moduleConfig.set("appointments", {
-  title: "Afspraken",
-  path: "./modules/overview.html",
-});
+  // 2. HTML RENDEREN
+  return `
+    <div class="flex-between">
+        <div>
+            <h2 class="text-title">${greeting}, Admin 👋</h2>
+            <p class="text-subtitle">Klaar voor een nieuwe dag bij Lyn & Skin?</p>
+        </div>
+        <button class="btn-primary" onclick="handleNavigation('calendar')">
+            <i class="fas fa-calendar-alt"></i> Naar Agenda
+        </button>
+    </div>
 
-// 2. De Router
-async function loadModule(moduleName) {
-  const content = document.getElementById("module-render-area");
+    <div class="dashboard-stats">
+        <div class="stat-card">
+            <span class="stat-value">${todayCount}</span>
+            <span class="stat-label">Afspraken Vandaag</span>
+        </div>
 
-  if (!content) {
-    console.error("Kan container 'module-render-area' niet vinden in HTML.");
-    return;
-  }
+        <div class="stat-card">
+            <span class="stat-value">${nextAppts.length}</span>
+            <span class="stat-label">Komende week</span>
+        </div>
 
-  // Check of de module bestaat
-  if (!moduleConfig.has(moduleName)) {
-    content.innerHTML = `<p>${moduleName} is nog in opbouw!</p>`;
-    return;
-  }
+        <div class="stat-card" style="border: 1px solid var(--primary);">
+            <div style="text-align:center;">
+                <span class="stat-label" style="display:block; margin-bottom:15px; color:var(--primary);">Direct inplannen</span>
+                <button onclick="openAppointmentModal()" class="quick-add-btn">
+                    <i class="fas fa-plus-circle"></i> Nieuwe Afspraak
+                </button>
+            </div>
+        </div>
+    </div>
 
-  const config = moduleConfig.get(moduleName);
+    <div class="dashboard-grid">
 
-  // Update de UI (Actieve knop status)
-  document
-    .querySelectorAll(".menu-item")
-    .forEach((el) => el.classList.remove("active"));
-  const activeBtn = document.querySelector(
-    `.menu-item[onclick*="${moduleName}"]`,
-  );
-  if (activeBtn) activeBtn.classList.add("active");
+        <div class="card">
+            <div class="flex-between" style="margin-bottom:1.5rem;">
+                <h3 style="margin:0;">📅 Eerstvolgende</h3>
+                <a href="#" onclick="handleNavigation('calendar')" style="font-size:0.85rem; color:var(--text-muted);">Alles zien &rarr;</a>
+            </div>
 
-  // Update de titel
-  // document.getElementById("page-title").innerText = config.title;
+            ${
+              nextAppts.length === 0
+                ? '<p style="color:#999; font-style:italic;">Geen afspraken op de planning.</p>'
+                : `
+                <div class="table-container" style="box-shadow:none; border:none; padding:0;">
+                    <table style="width:100%;">
+                        <tbody>
+                            ${nextAppts
+                              .map(
+                                (a) => `
+                                <tr onclick="openAppointmentModal('${a.id}')" style="cursor:pointer; border-bottom:1px solid #f0f0f0;">
+                                    <td style="padding:12px 0; font-weight:600; color:var(--text-main);">
+                                        ${formatDateShort(a.start_time)}
+                                    </td>
+                                    <td style="padding:12px 10px;">
+                                        ${a.clients?.first_name} ${a.clients?.last_name}
+                                        <div style="font-size:0.75rem; color:#888;">${a.treatments?.title || "-"}</div>
+                                    </td>
+                                    <td style="text-align:right; padding:12px 0;">${getStatusDot(a.status)}</td>
+                                </tr>
+                            `,
+                              )
+                              .join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `
+            }
+        </div>
 
-  try {
-    content.innerHTML = "<p>Laden...</p>"; // Feedback voor de gebruiker
+        <div style="display:flex; flex-direction:column; gap: 1.5rem;">
 
-    // A. HTML Ophalen
-    let response = await fetch(config.path);
-    if (!response.ok) throw new Error(`Kon module ${config.title} niet laden`);
-    content.innerHTML = await response.text();
+            <div class="card" style="background: #fafafa;">
+                <h3 style="margin:0 0 1rem 0; font-size:1rem; color:var(--text-muted);">Snel naar</h3>
+                <div class="dashboard-actions">
+                    <div onclick="handleNavigation('treatments')" class="action-card-btn">
+                        <i class="fas fa-syringe"></i>
+                        <span>Diensten</span>
+                    </div>
+                    <div onclick="handleNavigation('staff')" class="action-card-btn">
+                        <i class="fas fa-user-nurse"></i>
+                        <span>Team</span>
+                    </div>
+                    <div onclick="handleNavigation('cms')" class="action-card-btn">
+                        <i class="fas fa-laptop"></i>
+                        <span>Website</span>
+                    </div>
+                </div>
+            </div>
 
-    // B. Javascript Starten
-    // We zoeken de functie in het globale 'window' object
-    const initFunction = window[config.function];
+            <div class="card">
+                <h3 style="margin:0 0 1rem 0;">✨ Nieuwste Klanten</h3>
+                ${
+                  newClients.length === 0
+                    ? "<p>Nog geen klanten.</p>"
+                    : `
+                    <ul class="widget-list">
+                        ${newClients
+                          .map(
+                            (c) => `
+                            <li class="widget-item">
+                                <div class="widget-avatar">${c.first_name.charAt(0)}</div>
+                                <div style="flex-grow:1;">
+                                    <div style="font-weight:bold; font-size:0.9rem;">${c.first_name} ${c.last_name}</div>
+                                    <div style="font-size:0.75rem; color:#aaa;">${new Date(c.created_at).toLocaleDateString("nl-NL")}</div>
+                                </div>
+                                <button onclick="openClientDossier('${c.id}')" style="border:none; background:none; cursor:pointer; color:var(--text-muted);">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </li>
+                        `,
+                          )
+                          .join("")}
+                    </ul>
+                `
+                }
+            </div>
 
-    if (typeof initFunction === "function") {
-      initFunction();
-    } else {
-      console.warn(
-        `Geen startfunctie '${config.function}' gevonden voor ${moduleName}.`,
-      );
-    }
-  } catch (error) {
-    console.error(error);
-    content.innerHTML = `<p style="color:red">Fout: ${error.message}</p>`;
-  }
+        </div>
+    </div>
+    `;
+}
+
+// HELPERS
+function formatDateShort(isoString) {
+  const date = new Date(isoString);
+  const today = new Date();
+  const isToday =
+    date.getDate() === today.getDate() && date.getMonth() === today.getMonth();
+
+  const timeStr = date.toLocaleTimeString("nl-NL", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (isToday) return `<span style="color:var(--primary);">${timeStr}</span>`;
+  return `${date.getDate()}/${date.getMonth() + 1} <span style="color:#999; font-size:0.8em;">${timeStr}</span>`;
+}
+
+function getStatusDot(status) {
+  const colors = {
+    scheduled: "orange",
+    confirmed: "var(--primary)",
+    completed: "green",
+    cancelled: "#eee",
+  };
+  return `<i class="fas fa-circle" style="font-size:0.5rem; color:${colors[status] || "#ccc"};"></i>`;
 }

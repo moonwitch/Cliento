@@ -1,110 +1,55 @@
--- SECURITY POLICIES (RLS)
--- Enable Row Level security
-alter table public.profiles ENABLE row LEVEL SECURITY;
-alter table public.clients ENABLE row LEVEL SECURITY;
-alter table public.brands ENABLE row LEVEL SECURITY;
-alter table public.suppliers ENABLE row LEVEL SECURITY;
-alter table public.products ENABLE row LEVEL SECURITY;
-alter table public.content_blocks ENABLE row LEVEL SECURITY;
-alter table public.treatments ENABLE row LEVEL SECURITY;
-alter table public.appointments ENABLE row LEVEL SECURITY;
-alter table public.treatment_products ENABLE row LEVEL SECURITY;
-alter table public.profile_treatments ENABLE row LEVEL SECURITY;
-alter table public.product_suppliers ENABLE row LEVEL SECURITY;
-alter table public.brand_suppliers ENABLE row LEVEL SECURITY;
+-- ================================================================
+-- BESTAND: 03_policies.sql
+-- BESCHRIJVING: Beveiliging & Toegangsregels (Row Level Security)
+-- ================================================================
 
--- PUBLIC READ
-create policy "Public read treatments" on public.treatments for
-select
-  to anon,
-  authenticated using (true);
+-- 1. RLS ACTIVEREN
+-- Standaard staat alles dicht (niemand mag iets). We zetten RLS aan op alle tabellen.
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.clients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.treatments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.staff_treatments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cpublic.ontent_blocks ENABLE ROW LEVEL SECURITY;
+-- (Storage objects staan standaard al op RLS in Supabase)
 
-create policy "Public read products" on public.products for
-select
-  to anon,
-  authenticated using (true);
+-- 2. TABEL POLICIES
+-- A. PROFILES
+-- Iedereen mag profielen lezen (nodig om te weten wie wie is).
+CREATE POLICY "Public read profiles" ON public.profiles FOR SELECT USING (true);
+-- Alleen de eigenaar mag zijn eigen profiel aanpassen (bv. naam wijzigen).
+CREATE POLICY "Update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
-create policy "Public read profile_treatments" on public.profile_treatments for
-select
-  to anon,
-  authenticated using (true);
+-- B. STAFF ONLY ACCESS (Beheer Tabellen)
+-- Medewerkers (Admin/Employee) mogen alles doen in deze tabellen.
+-- We gebruiken de helper functie 'get_my_role()'.
+CREATE POLICY "Staff manage clients" ON public.clients FOR ALL
+USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
-create policy "Public read content_blocks" on public.content_blocks for
-select
-  to anon,
-  authenticated using (true);
+CREATE POLICY "Staff manage treatments" ON treatments FOR ALL
+USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
--- PROFIELEIGENAREN
-create policy "Read employee" on public.profiles for
-select
-  to authenticated using (role in ('employee', 'admin', 'superadmin'));
+CREATE POLICY "Staff manage appointments" ON public.appointments FOR ALL
+USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
-create policy "Read own profile" on public.profiles for
-select
-  to authenticated using (auth.uid () = id);
+CREATE POLICY "Staff manage skills" ON public.staff_treatments FOR ALL
+USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
--- KLANTEN
-create policy "View own client fiche" on public.clients for
-select
-  to authenticated using (auth.uid () = user_id);
+CREATE POLICY "Staff manage content" ON public.content_blocks FOR ALL
+USING ( public.get_my_role() IN ('admin', 'employee', 'superadmin') );
 
-create policy "View own appointments" on public.appointments for
-select
-  to authenticated using (
-    exists (
-      select
-        1
-      from
-        public.clients
-      where
-        id = public.appointments.client_id
-        and user_id = auth.uid ()
-    )
-  );
+-- 3. PUBLIC ACCESS (Website Bezoekers)
+CREATE POLICY "Public read treatments" ON public.treatments FOR SELECT USING (true);
+CREATE POLICY "Public read content" ON content_blocks FOR SELECT USING (true);
 
--- PERSONEEL (Full Access via get_my_role)
-create policy "Staff full access clients" on public.clients for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
+-- 4. STORAGE POLICIES (Afbeeldingen)
+-- Alleen personeel mag uploaden, wijzigen of verwijderen
+CREATE POLICY "Staff Manage Images" ON storage.objects FOR ALL
+USING (
+    bucket_id = 'images'
+    AND public.get_my_role() IN ('admin', 'employee', 'superadmin')
+)
+WITH CHECK (
+    bucket_id = 'images'
+    AND public.get_my_role() IN ('admin', 'employee', 'superadmin')
 );
-
-create policy "Staff full access appointments" on public.appointments for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access profiles" on public.profiles for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access treatments" on public.treatments for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access inventory" on public.products for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access brands" on public.brands for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access suppliers" on public.suppliers for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access profile_treatments" on public.profile_treatments for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access treatment_products" on public.treatment_products for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access product_suppliers" on public.product_suppliers for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Staff full access brand_suppliers" on public.brand_suppliers for all using (
-  public.get_my_role () in ('admin', 'employee', 'superadmin')
-);
-
-create policy "Admin update content_blocks" on public.content_blocks for all using (public.get_my_role () in ('admin', 'superadmin'));

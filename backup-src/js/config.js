@@ -9,7 +9,7 @@ const PROD_URL = "https://opwzyuswtztpulzpyomp.supabase.co";
 const PROD_KEY = "sb_publishable_XiohYAtcQys8dqMAn0hH5w_aJSIJuDs";
 
 // 2. Check where we are running
-const isDev = false;
+const isDev = true;
 
 // 3. Initialize
 const supabaseUrl = isDev ? DEV_URL : PROD_URL;

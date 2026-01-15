@@ -1,12 +1,11 @@
-insert into
-  public.treatments (
+INSERT INTO public.treatments (
     category,
     title,
     description,
     duration_minutes,
     price
   )
-values
+VALUES
   (
     'Manicure',
     'Basis manicure',
