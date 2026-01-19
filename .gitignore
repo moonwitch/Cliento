@@ -24,7 +24,9 @@ logs
 
 # Environment variables
 .env*
-js/config.js
+src/js/config.js
 
 # MacOS
 .DS_Store
+.vercel
+.env*.local
